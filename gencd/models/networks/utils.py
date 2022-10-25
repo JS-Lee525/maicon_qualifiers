@@ -62,9 +62,13 @@ def load_pretrained_net(net, path):
             else:       
                 new_weights[k] = state_dict[k]
     
-    net.load_state_dict(new_weights)
-    if all_okay:
-        print('<All weights loaded successfully>')
+    try:
+        net.load_state_dict(new_weights)
+        if all_okay:
+            print('<All weights loaded successfully>')
+    except:
+        print(f'cannot load {path}. using intial net.')
+        pass
     
     return net
 

@@ -7,7 +7,7 @@ from PIL import Image
 import torch
 from torch.utils.data import Dataset
 
-class CDBaseDataset(Dataset):
+class BaseDataset(Dataset):
     def __init__(self, opt, phase='train'):
         super().__init__()
         self.opt = opt
@@ -19,7 +19,7 @@ class CDBaseDataset(Dataset):
         return len(self.keys)
 
     def __getitem__(self, index):
-        image, image2, mask = self.read_data(index)
+        image, image2, mask, metadata = self.read_data(index)
         
         input_items = {
             'image': image, 'image2': image2
@@ -28,6 +28,7 @@ class CDBaseDataset(Dataset):
             input_items['mask'] = mask
                 
         return_items = self.transform(**input_items)
+        return_items['metadata'] = metadata
         
         return return_items
     
@@ -35,9 +36,9 @@ class CDBaseDataset(Dataset):
     def prepare_data(self):
         pass
     
-    ## override this to read data by index. must return image, image2, mask or image, image2, None.
+    ## override this to read data by index. must return image, image2, mask, meta or image, image2, None, meta.
     def read_data(self, index):
-        return None, None, None
+        return None, None, None, None
     
     ## override this to define self.transform
     def prepare_transforms(self):

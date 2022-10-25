@@ -9,6 +9,26 @@ from gencd.utils.misc import make_dir_with_number, find_dir_with_number
 class TrainOptions():
     def __init__(self):
         self.initialized = False
+
+    @staticmethod
+    def add_model_specific_args(parser):
+        # network
+        parser.add_argument('--net_module', type=str, help='network module. if None, use current models.networks')
+        parser.add_argument('--net_config', type=str, help='path to network config.yaml')
+        parser.add_argument('--load_pretrained_network', type=str, help='path to pretrained network')
+        
+        # model
+        parser.add_argument('--model', type=str, default='cd_base', help='chooses which model to use.')
+        parser.add_argument('--load_pretrained_model', type=str, help='path to pretrained model (gencd)')
+        parser.add_argument('--loss', type=str, default='dicece', help='refer to models.losses')
+        return parser
+    
+    @staticmethod
+    def get_model_specific_args():
+        dummy = argparse.ArgumentParser()
+        dummy = TrainOptions.add_model_specific_args(dummy)
+        dummyopt = dummy.parse_args(args=[])
+        return vars(dummyopt).keys()
         
     def initialize(self, parser):
         # basic
@@ -22,35 +42,30 @@ class TrainOptions():
         
         # data
         parser.add_argument('--datadir', type=str, help='path to data')
-        parser.add_argument('--file_extension', type=str, default='png', help='case-sensitive image file extension')
+        #parser.add_argument('--file_extension', type=str, default='png', help='case-sensitive image file extension')
         parser.add_argument('--dataset_mode', type=str, help='name of dataset class')
-        parser.add_argument('--nch_in', type=int, default=3, help='number of input channels')
         parser.add_argument('--num_class', type=int, default=2, help='number of classes including background')
         parser.add_argument('--patch_size', default=256, type=int, help='input patch size')
-        
-        # network
-        parser.add_argument('--net_module', type=str, help='network module. if None, use current models.networks')
-        parser.add_argument('--net_config', type=str, help='path to network config.yaml')
-        
-        # model
-        parser.add_argument('--model', type=str, default='cd_base', help='chooses which model to use.')
-        parser.add_argument('--load_pretrained', type=str, help='path to pretrained model')
-
-        # training parameters
-        parser.add_argument('--max_epochs', type=int, default=100, help='number of epochs')
-        parser.add_argument('--loss', type=str, default='dicece', help='refer to models.losses')
         parser.add_argument('--batch_size', default=1, type=int, help='batch size for train')
         parser.add_argument('--batch_size_inference', default=1, type=int, help='batch size for inference')
         
+        # model & network
+        parser = TrainOptions.add_model_specific_args(parser)
+
+        # training parameters
+        parser.add_argument('--train_only', action='store_true')
+        parser.add_argument('--max_epochs', type=int, default=100, help='number of epochs')        
         parser.add_argument('--lr', type=float, default=0.0002, help='initial learning rate')
         parser.add_argument('--lr_policy', type=str, default='poly', help='learning rate policy. CUT, cycleGAN default is linear. nnUNet default is poly [poly | linear | plateau | cosine]')
         parser.add_argument('--optimizer', type=str, default='adam', help='adam or sgd')
                 
         # trainer parameters
-        parser.add_argument('--loggers', type=str, default='wandb', help='csv, tb, wandb')
-        parser.add_argument('--wandb_project', type=str, default='maicon', help='csv, tb, wandb')
-        parser.add_argument('--log_every_n_steps', type=int, default=10, help='logging frequency')
         parser.add_argument('--callbacks', type=str, default='ckpt_lr', help='ckpt, lr')
+        parser.add_argument('--result_dir', type=str, help='save validation results. if none, use run_dir/result')
+        parser.add_argument('--loggers', type=str, default='wandb', help='csv, tb, wandb')
+        parser.add_argument('--wandb_project', type=str, default='maicon')
+        parser.add_argument('--wandb_name', type=str)
+        parser.add_argument('--log_every_n_steps', type=int, default=10, help='logging frequency')
         parser.add_argument('--check_val_every_n_epoch', type=int, default=1, help='run valid loop every n epoch')
         parser.add_argument('--checkpoint_monitor', type=str, default='loss/val_loss', help='checkpoint monitor. passed to ModelCheckpoint')
         parser.add_argument('--checkpoint_monitor_mode', type=str, default='min', help='e.g. min for losses. max for accuracy. passed to ModelCheckpoint')
@@ -110,15 +125,15 @@ class TrainOptions():
             except:
                 save_dir = make_dir_with_number(run_dir, fname=opt.exp_suffix, num=opt.exp_number)    
         opt.save_dir = save_dir
-        opt.result_dir = None
         
-        opt.phase = 'train'
+        ### inference for later use
+        opt.inference = False
+        
         return opt
     
     def print_options(self, opt):
         '''Print options and save
         '''
-        
         message = ''
         message += '----------------- Options ---------------\n'
         for k, v in vars(opt).items():
@@ -131,7 +146,7 @@ class TrainOptions():
         print(message)        
         
         if not opt.no_saveoptions:
-            file_name = os.path.join(opt.save_dir, f'_{opt.phase}_opt.txt')
+            file_name = os.path.join(opt.save_dir, f'_train_opt.txt')
             with open(file_name, 'wt') as opt_file:
                 opt_file.write(message)
                 opt_file.write('\n')        

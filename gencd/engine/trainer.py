@@ -1,8 +1,10 @@
+from imageio import imwrite
 import json
 import os
 import numpy as np
 from PIL import Image
 import SimpleITK as sitk
+from typing import Optional, Sequence, List, Tuple, Union
 import wandb
 
 import torch
@@ -19,6 +21,7 @@ class MyTrainer(pl.Trainer):
     def __init__(self, pl_module: pl.LightningDataModule, **kwargs):
         opt = pl_module.opt
         self.opt = opt
+        self.inference = opt.inference
 
         nkwargs = {}
         nkwargs['default_root_dir'] = opt.run_base_dir
@@ -29,15 +32,15 @@ class MyTrainer(pl.Trainer):
             nkwargs['accelerator'] = 'cpu'
         
         nkwargs['logger'] = self.define_loggers(opt)
+        nkwargs['log_every_n_steps'] = opt.log_every_n_steps
         nkwargs['callbacks'] = self.define_callbacks(opt)
         # mixed precision is default
         nkwargs['precision'] = 32 if opt.single_precision else 16
         
-        nkwargs['max_epochs'] = opt.max_epochs   
-        #nkwargs['val_check_interval'] = opt.val_check_interval
-        nkwargs['check_val_every_n_epoch'] = opt.check_val_every_n_epoch
-        nkwargs['log_every_n_steps'] = opt.log_every_n_steps
-        nkwargs['detect_anomaly'] = opt.detect_anomaly
+        if not self.inference:
+            nkwargs['max_epochs'] = opt.max_epochs   
+            nkwargs['check_val_every_n_epoch'] = opt.check_val_every_n_epoch
+            nkwargs['detect_anomaly'] = opt.detect_anomaly
         
         # if any, update additional kwargs, but pl_module's opt has higher priority than additional kwargs
         for k,v in kwargs.items():
@@ -48,8 +51,13 @@ class MyTrainer(pl.Trainer):
                 
     def define_callbacks(self, opt):
         L = []
+        if not opt.callbacks:
+            return []
+    
+        callbacks = opt.callbacks.lower().split('_')
+    
         # ModelCheckpoint
-        if 'ckpt' in opt.callbacks.lower():
+        if 'ckpt' in callbacks:
             if opt.checkpoint_nooverwrite:
                 save_top_k = -1
             else:
@@ -66,9 +74,14 @@ class MyTrainer(pl.Trainer):
             )
             L.append(cb_checkpoint)
         # LearingRateMonitor
-        if 'lr' in opt.callbacks.lower():
+        if 'lr' in callbacks:
             cb_lrmonitor = LearningRateMonitor(logging_interval='epoch')
             L.append(cb_lrmonitor)
+            
+        # Results
+        if 'result' in callbacks:
+            cb_result = ResultsCallback(opt.result_dir)
+            L.append(cb_result)
             
         return L
     
@@ -87,9 +100,47 @@ class MyTrainer(pl.Trainer):
             if 'tb' in opt.loggers.lower():
                 L.append(TensorBoardLogger(log_dir, name=log_name, version=log_version, sub_dir='tensorboard'))
             if 'wandb' in opt.loggers.lower():
-                L.append(WandbLogger(save_dir=opt.save_dir, project='maicon', name=os.path.join(log_name, log_version)))
+                L.append(WandbLogger(save_dir=opt.save_dir, project=opt.wandb_project, name=opt.wandb_name if opt.wandb_name else os.path.join(log_name, log_version)))
         
         if len(L)==0:
             L = False
         
         return L
+    
+# save results callback
+class ResultsCallback(pl.Callback):
+    '''Save results to SAVE_DIR
+    '''
+    def __init__(
+        self,
+        result_dir: Union[List[str], str] = './results',
+    ):
+        super().__init__()
+        if not isinstance(result_dir, list):
+            result_dir = [result_dir]
+        self.result_dir = result_dir
+    
+    # Callback method
+    def on_predict_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx=0):       
+        keys = batch['metadata']['key']
+        outs = outputs.detach().cpu().numpy()
+        
+        for i in range(outs.shape[0]):
+            n_img = outs[i].astype(np.float16)
+            fn = keys[i]           
+            
+            newpath = os.path.join(self.result_dir[dataloader_idx], f'{fn}.npy')
+            
+            np.save(newpath, n_img)
+    
+    def on_test_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx=0):
+        keys = batch['metadata']['key']
+        outs = outputs.detach().cpu().numpy()
+        
+        for i in range(outs.shape[0]):
+            n_img = outs[i].astype(np.float16)
+            fn = keys[i]           
+            
+            newpath = os.path.join(self.result_dir[dataloader_idx], f'{fn}.npy')
+            
+            np.save(newpath, n_img)
