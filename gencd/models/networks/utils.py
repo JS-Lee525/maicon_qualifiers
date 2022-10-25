@@ -34,7 +34,7 @@ def define_network(net_config, net_module=None):
 
 
 def load_pretrained_net(net, path):
-    '''For loading state_dict of part of the network.
+    '''allow partial loading
     '''
 
     device = next(net.parameters()).device
@@ -46,21 +46,25 @@ def load_pretrained_net(net, path):
     except:
         state_dict = torch.load(path, map_location=device)
 
-    all_keys_match = True
+    all_okay = True
 
     new_weights = net.state_dict()
 
-    # load only keys also in pretrained
+    # partial loading. check key and shape
     for k in new_weights.keys():
         if not k in state_dict.keys():
-            all_keys_match = False
-            print(f"{k} is missing in pretrained")
-        
-        new_weights[k] = state_dict[k]
+            print(f'{k} is missing in pretrained')
+            all_okay = False
+        else:
+            if new_weights[k].shape != state_dict[k].shape:
+                print(f'skip {k}, required shape: {new_weights[k].shape}, pretrained shape: {state_dict[k].shape}')
+                all_okay = False
+            else:       
+                new_weights[k] = state_dict[k]
     
     net.load_state_dict(new_weights)
-    if all_keys_match:
-        print('<All keys matched successfully>')
+    if all_okay:
+        print('<All weights loaded successfully>')
     
     return net
 
