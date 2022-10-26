@@ -10,10 +10,10 @@ from torch.utils.data import Dataset
 import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
 
-from .s2looking_dataset import S2LookingDataset
+from .levir_dataset import LevirDataset
 from .transforms import ComposeList
 
-class S2v0Dataset(S2LookingDataset):    
+class LEVIRv1Dataset(LevirDataset):    
     ## override this to define self.transform
     def prepare_transforms(self):
         self.transform = None
@@ -26,6 +26,7 @@ class S2v0Dataset(S2LookingDataset):
                 A.VerticalFlip(p=0.5),
                 A.HorizontalFlip(p=0.5),
                 A.Rotate(limit=30, p=0.5),
+                #A.CropNonEmptyMaskIfExists(self.opt.patch_size, self.opt.patch_size, p=1),
                 #A.RandomCrop(self.opt.patch_size, self.opt.patch_size, p=1),
                 A.OneOf([
                     A.CropNonEmptyMaskIfExists(self.opt.patch_size, self.opt.patch_size, p=1),
