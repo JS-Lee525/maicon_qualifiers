@@ -12,7 +12,7 @@ from torchvision.transforms import ToPILImage, ToTensor
 from torchvision.utils import make_grid
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
-from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
+from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger, WandbLogger
 
 class MyTrainer(pl.Trainer):
     '''Pytorch Lightning Trainer with custom callbacks, logger, args, etc.
