@@ -56,13 +56,13 @@ class TrainOptions():
         parser.add_argument('--train_only', action='store_true')
         parser.add_argument('--max_epochs', type=int, default=100, help='number of epochs')        
         parser.add_argument('--lr', type=float, default=0.0002, help='initial learning rate')
-        parser.add_argument('--lr_policy', type=str, default='poly', help='learning rate policy. CUT, cycleGAN default is linear. nnUNet default is poly [poly | linear | plateau | cosine]')
+        parser.add_argument('--lr_policy', type=str, default='step', help='learning rate policy. CUT, cycleGAN default is linear. nnUNet default is poly [step | poly | linear | plateau | cosine]')
         parser.add_argument('--optimizer', type=str, default='adam', help='adam or sgd')
                 
         # trainer parameters
-        parser.add_argument('--callbacks', type=str, default='ckpt_lr', help='ckpt, lr')
+        parser.add_argument('--callbacks', type=str, help='result, ckpt, lr')
         parser.add_argument('--result_dir', type=str, help='save validation results. if none, use run_dir/result')
-        parser.add_argument('--loggers', type=str, default='wandb', help='csv, tb, wandb')
+        parser.add_argument('--loggers', type=str, help='csv, tb, wandb')
         parser.add_argument('--wandb_project', type=str, default='maicon')
         parser.add_argument('--wandb_name', type=str)
         parser.add_argument('--log_every_n_steps', type=int, default=10, help='logging frequency')
@@ -73,7 +73,7 @@ class TrainOptions():
         parser.add_argument('--checkpoint_every_n_epochs', type=int, help='checkpoint every n epochs. passed to ModelCheckpoint')
         parser.add_argument('--checkpoint_filename', type=str, default='epoch={epoch}', help='checkpoint file format')
         parser.add_argument('--save_fullmodel', action='store_true', help='if True, save full model. Else, save weights only')
-        parser.add_argument('--single_precision', action='store_true', help='if True, fp32 instead of mixed precision')
+        parser.add_argument('--mixed_precision', action='store_true', help='if True, use AMP')
         parser.add_argument('--detect_anomaly', action='store_true', help='detect anomaly')
         
         self.initialized = True

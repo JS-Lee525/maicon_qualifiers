@@ -43,7 +43,8 @@ class S2LookingDataset(BaseDataset):
         
         if len(self.mask_paths)>0:
             mask_path = self.mask_paths[index]
-            mask = (np.array(Image.open(mask_path).convert('L'))/255.>0.5).astype(int)
+            mask = (np.array(Image.open(mask_path).convert('L'))/255.>0.5).astype(np.uint8)
+            mask = np.expand_dims(mask, axis=-1)
             metadata['mask_path'] = mask_path
         else:
             mask = None

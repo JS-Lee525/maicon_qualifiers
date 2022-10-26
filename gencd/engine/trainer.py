@@ -35,7 +35,7 @@ class MyTrainer(pl.Trainer):
         nkwargs['log_every_n_steps'] = opt.log_every_n_steps
         nkwargs['callbacks'] = self.define_callbacks(opt)
         # mixed precision is default
-        nkwargs['precision'] = 32 if opt.single_precision else 16
+        nkwargs['precision'] = 16 if opt.mixed_precision else 32
         
         if not self.inference:
             nkwargs['max_epochs'] = opt.max_epochs   

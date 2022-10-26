@@ -16,7 +16,7 @@ class TestOptions():
         parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
         parser.add_argument('--num_workers', default=4, type=int, help='# threads for loading data')
         parser.add_argument('--no_saveoptions', action='store_true')
-        parser.add_argument('--single_precision', action='store_true', help='if True, fp32 instead of mixed precision')
+        parser.add_argument('--mixed_precision', action='store_true', help='if True, use AMP')
         
         # data
         parser.add_argument('--phase', type=str, help='name of dataset class')

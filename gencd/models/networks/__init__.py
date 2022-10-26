@@ -1,2 +1,2 @@
-from .SNUNetCD import SNUNet_ECAM
+from .SNUNetCD import SNUNet_ECAM, Siam_NestedUNet_Conc
 

@@ -19,17 +19,18 @@ class S2v0Dataset(S2LookingDataset):
         self.transform = None
         if self.phase == 'train':
             transforms1 = A.Compose([
-                A.RandomBrightnessContrast(p=0.8),    
-                A.RandomGamma(p=0.8),
+                #A.RandomBrightnessContrast(p=0.8),    
+                #A.RandomGamma(p=0.8),
             ])            
             transforms2 = A.Compose([
                 A.VerticalFlip(p=0.5),
                 A.HorizontalFlip(p=0.5),
                 A.Rotate(limit=30, p=0.5),
+                #A.RandomCrop(self.opt.patch_size, self.opt.patch_size, p=1),
                 A.OneOf([
-                    A.CropNonEmptyMaskIfExists(self.opt.patch_size, self.opt.patch_size, p=1),
+                    A.CropNonEmptyMaskIfExists(self.opt.patch_size, self.opt.patch_size, p=10),
                     A.RandomCrop(self.opt.patch_size, self.opt.patch_size, p=1),
-                ], p=1.0),
+                ], p=1.0),                
                 ToTensorV2(p=1.0, transpose_mask=True),
             ], additional_targets={'image2': 'image'})   
             

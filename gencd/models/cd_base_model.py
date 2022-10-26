@@ -11,7 +11,8 @@ from torch.optim import lr_scheduler
 import pytorch_lightning as pl
 
 from monai.inferers import sliding_window_inference
-from monai.metrics import MeanIoU, compute_meaniou
+from monai.metrics import MeanIoU
+from monai.networks import one_hot
 
 from .losses import define_loss
 from .networks.utils import define_network, load_pretrained_net
@@ -53,7 +54,7 @@ class CDBaseModel(pl.LightningModule):
     def forward(self, x1, x2):
         output = self.netC(x1, x2)
         if isinstance(output, tuple):
-            output = output[0]
+            output = output[-1]
         return output
             
     def training_step(self, batch, batch_idx):
@@ -70,7 +71,7 @@ class CDBaseModel(pl.LightningModule):
         
         loss = self.criterion(outputs, self.mask)
         
-        bin_outputs = F.one_hot(outputs.argmax(1), num_classes=int(outputs.shape[1])).permute(0,3,1,2)
+        bin_outputs = one_hot(outputs.argmax(1, keepdim=True), self.hparams['opt'].num_class)
         self.metric(bin_outputs, self.mask)
         
         self.log(f'loss/val_loss', loss, batch_size=self.current_batch_size, on_step=True, on_epoch=True)
@@ -92,7 +93,7 @@ class CDBaseModel(pl.LightningModule):
         if 'mask' in batch.keys():
             loss = self.criterion(outputs, self.mask)
             self.log(f'loss/test_loss', loss, batch_size=self.current_batch_size, on_step=True, on_epoch=True)
-            bin_outputs = F.one_hot(outputs.argmax(1), num_classes=self.hparams['opt'].num_class).permute(0,3,1,2)
+            bin_outputs = one_hot(outputs.argmax(1, keepdim=True), self.hparams['opt'].num_class)
             self.metric(bin_outputs, self.mask) 
         
         return outputs
@@ -111,14 +112,14 @@ class CDBaseModel(pl.LightningModule):
         self.current_batch_size = batch['image'].shape[0]
         
         if 'mask' in batch.keys():
-            self.mask = F.one_hot(batch['mask'].long(), num_classes=self.hparams['opt'].num_class).permute(0,3,1,2)
+            self.mask = one_hot(batch['mask'], self.hparams['opt'].num_class)
     
     def forward_test(self, xs):
         nch = int(xs.shape[1])
         x1 = xs[:,:nch//2]
         x2 = xs[:,nch//2:]
         out = self.forward(x1, x2)
-        return F.softmax(out, dim=1)
+        return out
     
     def _step_test(self, batch):
         self.set_input(batch)
