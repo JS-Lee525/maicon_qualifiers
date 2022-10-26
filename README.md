@@ -6,7 +6,7 @@ python train.py --exp_name pre --exp_number 1 --gpu_ids 0 --datadir $S2LOOKINGDA
 ```
 ### Test
 ```bash
-python test.py --gpu_ids 0 --run_base_dir $SAVE_PATH --phase val --datadir $S2LOOKINGDATASET_PATH --dataset_mode s2_v0 --patch_size 256 --batch_size 8 --batch_size_inference 2 --load_pretrained_model $TRAINED_WEIGHT_PATH --callbacks result
+python test.py --gpu_ids 0 --run_base_dir $SAVE_PATH --phase val --datadir $S2LOOKINGDATASET_PATH --dataset_mode s2_v0 --patch_size 256 --batch_size 8 --batch_size_inference 2 --load_pretrained_model $TRAINED_WEIGHT_PATH --callbacks result --loggers csv
 ```
 
 ## Using different networks
@@ -37,6 +37,6 @@ net_config.yaml
 - `prepare_transforms`: phase=='train'의 경우 crop 및 augmentation, 그 외의 경우 원본 이미지를 그대로 ToTensor만 취함.
 
 ## Logging
-현재 csv, tensorboard, wandb 모두 있으나 wandb로 통일하면 좋을 것 같음. `--loggers wandb`으로 사용 가능.
+현재 csv, tensorboard, wandb 모두 있음. train시에는 `--loggers wandb`, test시에는 `--loggers csv` .
 - `--wandb_project`: wandb상 프로젝트명. 
 - `--wandb_name`: 프로젝트 아래에 표기되는 run 이름. 입력 없을 경우, training folder이름으로 들어감.
