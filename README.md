@@ -27,7 +27,7 @@ net_config.yaml
 - `load_pretrained_network`: pretrained weight 파일 (.pt) 경로
 
 ## Dataset
-`gencd.data.s2looking_dataset`과 `gencd.data.s2_v0_dataset` 참고.
+`gencd.data.s2looking_dataset`과 `gencd.data.s2_v0_dataset` 참고. 데이터셋이 바뀌거나 다른 transform 방법으로 customize할 경우에 gencd.data 아래에 새로운 class를 정의해서 사용하면 됨.
 ### Args
 - `dataset_mode`: 데이터셋 class "XxxYyyDataset"이 xxx_yyy_dataset.py에 정의되어야함 (파일명에서 언더바를 parsing한 단어로 찾음)
 - `datadir`: 데이터셋 base 경로. 데이터셋 구조에 따라 Class 내 prepare_data 메소드로 하위 경로 등 개별로 정의함.
