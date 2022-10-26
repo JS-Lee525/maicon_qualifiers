@@ -1,8 +1,10 @@
 import copy
 import importlib
+import inspect
 import functools
 import numpy as np
 import os
+import pkgutil
 from typing import Optional, Sequence, Tuple, Union
 import yaml
 
@@ -11,25 +13,43 @@ import torch.nn as nn
 from torch.nn import init
 from torch.optim import lr_scheduler
 
+def recursive_find_python_class(class_name, current_module):
+    tr = None
+    m = importlib.import_module(current_module)
+    folder = [os.path.dirname(inspect.getfile(m))]
+    for importer, modname, ispkg in pkgutil.iter_modules(folder):
+        # print(modname, ispkg)
+        if not ispkg:
+            m = importlib.import_module(current_module + "." + modname)
+            if hasattr(m, class_name):
+                tr = getattr(m, class_name)
+                break
+
+    if tr is None:
+        for importer, modname, ispkg in pkgutil.iter_modules(folder):
+            if ispkg:
+                next_current_module = current_module + "." + modname
+                tr = recursive_find_python_class(class_name, next_current_module)
+            if tr is not None:
+                break
+    return tr
+
 def define_network(net_config, net_module=None):
     if net_module is None:
         net_module = 'gencd.models.networks'
-    netlib = importlib.import_module(net_module)
     
     with open(net_config) as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
     net_name = cfg['net_name']
     config = cfg['config']
-    
-    netcls = None
-    if not hasattr(netlib, net_name):
-        print(f'In {net_module}, there should be a class that matches {net_name}.')        
-    else:
-        netcls = getattr(netlib, net_name)
-    
+
+    netcls = recursive_find_python_class(net_name, net_module)
+                  
     if netcls:
         net = netcls(**config)       
         return net
+    else:
+        print(f'In {net_module}, there should be a class that matches {net_name}.')  
     return None
 
 
