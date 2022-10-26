@@ -40,7 +40,7 @@ class CDBaseModel(pl.LightningModule):
         self.criterion = define_loss(opt.loss)
         
         # define metric
-        self.metric = MeanIoU()
+        self.metric = MeanIoU(include_background=False)
         
     ### predefined methods
     
