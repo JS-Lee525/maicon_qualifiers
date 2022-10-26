@@ -1,0 +1,4 @@
+config:
+  in_ch: 3
+  out_ch: 2
+net_name: SNUNet_ECAM
