@@ -1,6 +1,3 @@
-'''Copied from https://github.com/likyoo/Siam-NestedUNet/models/Models.py
-'''
-
 # Kaiyu Li
 # https://github.com/likyoo
 #
@@ -108,7 +105,7 @@ class SNUNet_ECAM(nn.Module):
         self.ca2 = ChannelAttention(filters[0], ratio=16 // 4)
         self.ca3 = ChannelAttention(filters[0], ratio=16 // 4)
         self.ca4 = ChannelAttention(filters[0], ratio=16 // 4)
-
+        
         self.conv_final = nn.Conv2d(filters[0] * 4, out_ch, kernel_size=1)
 
         for m in self.modules():
