@@ -28,7 +28,7 @@ class S2v0Dataset(S2LookingDataset):
                 A.Rotate(limit=30, p=0.5),
                 #A.RandomCrop(self.opt.patch_size, self.opt.patch_size, p=1),
                 A.OneOf([
-                    A.CropNonEmptyMaskIfExists(self.opt.patch_size, self.opt.patch_size, p=10),
+                    A.CropNonEmptyMaskIfExists(self.opt.patch_size, self.opt.patch_size, p=1),
                     A.RandomCrop(self.opt.patch_size, self.opt.patch_size, p=1),
                 ], p=1.0),                
                 ToTensorV2(p=1.0, transpose_mask=True),
