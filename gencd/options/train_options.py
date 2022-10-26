@@ -55,7 +55,7 @@ class TrainOptions():
         # training parameters
         parser.add_argument('--train_only', action='store_true')
         parser.add_argument('--max_epochs', type=int, default=100, help='number of epochs')        
-        parser.add_argument('--lr', type=float, default=0.0002, help='initial learning rate')
+        parser.add_argument('--lr', type=float, default=0.001, help='initial learning rate')
         parser.add_argument('--lr_policy', type=str, default='step', help='learning rate policy. CUT, cycleGAN default is linear. nnUNet default is poly [step | poly | linear | plateau | cosine]')
         parser.add_argument('--optimizer', type=str, default='adam', help='adam or sgd')
                 
