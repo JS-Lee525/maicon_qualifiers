@@ -13,7 +13,7 @@ from albumentations.pytorch.transforms import ToTensorV2
 from .levir_dataset import LevirDataset
 from .transforms import ComposeList
 
-class LEVIRv1Dataset(LevirDataset):    
+class LEVIRv2Dataset(LevirDataset):    
     ## override this to define self.transform
     def prepare_transforms(self):
         self.transform = None
