@@ -3,7 +3,6 @@ import json
 import os
 import numpy as np
 from PIL import Image
-import SimpleITK as sitk
 from typing import Optional, Sequence, List, Tuple, Union
 import wandb
 
@@ -13,6 +12,8 @@ from torchvision.utils import make_grid
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger, WandbLogger
+
+from .callbacks import ResultsCallback
 
 class MyTrainer(pl.Trainer):
     '''Pytorch Lightning Trainer with custom callbacks, logger, args, etc.
@@ -95,11 +96,13 @@ class MyTrainer(pl.Trainer):
         
         L = []
         if (opt.loggers):
-            if 'csv' in opt.loggers.lower():        # CSV Logger       
+            loggers = opt.loggers.lower().split('_')
+            
+            if 'csv' in loggers:        # CSV Logger       
                 L.append(CSVLogger(log_dir, name=log_name, version=log_version))
-            if 'tb' in opt.loggers.lower():
+            if 'tb' in loggers:
                 L.append(TensorBoardLogger(log_dir, name=log_name, version=log_version, sub_dir='tensorboard'))
-            if 'wandb' in opt.loggers.lower():
+            if 'wandb' in loggers:
                 L.append(WandbLogger(save_dir=opt.save_dir, project=opt.wandb_project, name=opt.wandb_name if opt.wandb_name else os.path.join(log_name, log_version)))
         
         if len(L)==0:

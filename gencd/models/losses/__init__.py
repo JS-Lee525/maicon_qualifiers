@@ -16,6 +16,8 @@ def define_loss(loss_name):
         loss = DiceCELoss(softmax=True, include_background=False, smooth_nr=eps, smooth_dr=eps,)
     elif loss_name.lower() == 'dicefocal':
         loss = DiceFocalLoss(softmax=True, gamma=2, focal_weight=0.5, include_background=False, smooth_nr=eps, smooth_dr=eps,)
+    elif loss_name.lower() == 'focal_bg':
+        loss = FocalLoss(include_background=True, gamma=2, weight=0.5)
     elif loss_name.lower() == 'dice_bg':
         loss = DiceLoss(softmax=True, include_background=True, smooth_nr=eps, smooth_dr=eps,)
     elif loss_name.lower() == 'dicece_bg':
