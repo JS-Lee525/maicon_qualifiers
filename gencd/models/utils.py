@@ -45,7 +45,9 @@ def get_scheduler(optimizer, opt):
 
 def define_optimizer(net_params, opt):
     if opt.optimizer.lower() == 'adam':
-        optimizer = torch.optim.Adam(net_params, opt.lr, betas=(0.5, 0.999), eps=1e-04)
+        optimizer = torch.optim.Adam(net_params, opt.lr, betas=(0.9, 0.999), eps=1e-04)
+    elif opt.optimizer.lower() == 'adamw':
+        optimizer = torch.optim.AdamW(net_params, opt.lr, betas=(0.9, 0.999), weight_decay=0.01, eps=1e-04)
     elif opt.optimizer.lower() == 'sgd':
         optimizer = torch.optim.SGD(net_params, opt.lr, weight_decay=3e-5, momentum=0.99, nesterov=True)
     else:
