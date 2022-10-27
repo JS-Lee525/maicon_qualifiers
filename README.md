@@ -37,6 +37,6 @@ net_config.yaml
 - `prepare_transforms`: phase=='train'의 경우 crop 및 augmentation, 그 외의 경우 원본 이미지를 그대로 ToTensor만 취함.
 
 ## Logging
-현재 csv, tensorboard, wandb 모두 있음. train시에는 `--loggers wandb`, test시에는 `--loggers csv` .
+현재 csv, tensorboard, wandb 모두 있음. train시에는 `--loggers wandb`, test시에는 `--loggers csv` 추천.
 - `--wandb_project`: wandb상 프로젝트명. 
 - `--wandb_name`: 프로젝트 아래에 표기되는 run 이름. 입력 없을 경우, training folder이름으로 들어감.
