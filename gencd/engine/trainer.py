@@ -13,7 +13,7 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger, WandbLogger
 
-from .callbacks import ResultsCallback
+from .callbacks import ResultsCallback, MetricsBestValidCallback
 
 class MyTrainer(pl.Trainer):
     '''Pytorch Lightning Trainer with custom callbacks, logger, args, etc.
@@ -78,6 +78,11 @@ class MyTrainer(pl.Trainer):
         if 'lr' in callbacks:
             cb_lrmonitor = LearningRateMonitor(logging_interval='epoch')
             L.append(cb_lrmonitor)
+            
+        # Save Best Validation Metric
+        if 'metricvalid' in callbacks:
+            cb_metricvalid = MetricsBestValidCallback(['metric/val_mIOU'], opt.checkpoint_monitor, opt.checkpoint_monitor_mode)
+            L.append(cb_metricvalid)
             
         # Results
         if 'result' in callbacks:

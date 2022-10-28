@@ -60,7 +60,7 @@ class TrainOptions():
         parser.add_argument('--optimizer', type=str, default='adam', help='adam or sgd')
                 
         # trainer parameters
-        parser.add_argument('--callbacks', type=str, help='result, ckpt, lr')
+        parser.add_argument('--callbacks', type=str, help='result, ckpt, lr, metricvalid')
         parser.add_argument('--result_dir', type=str, help='save validation results. if none, use run_dir/result')
         parser.add_argument('--loggers', type=str, help='csv, tb, wandb')
         parser.add_argument('--wandb_project', type=str, default='maicon')

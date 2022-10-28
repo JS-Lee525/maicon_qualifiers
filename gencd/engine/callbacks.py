@@ -1,3 +1,4 @@
+import copy
 import os
 import numpy as np
 from PIL import Image
@@ -44,3 +45,44 @@ class ResultsCallback(pl.Callback):
             newpath = os.path.join(self.result_dir[dataloader_idx], f'{fn}.npy')
             
             np.save(newpath, n_img)
+            
+            
+# metrics callback
+# for logging best validation metric (best means when monitor is best. e.g. val_loss)
+class MetricsBestValidCallback(pl.Callback):
+    def __init__(
+        self,
+        metric: Union[List[str], str] = 'metric/val_mIOU',
+        monitor: str = 'loss/val_loss',
+        monitor_mode: str = 'min',
+    ):
+        super().__init__()
+        if not isinstance(metric, list):
+            metric = [metric]
+        self.metric = metric
+        self.monitor = monitor
+        self.monitor_mode = monitor_mode
+        self.all_metrics = {}
+    
+    def on_validation_epoch_end(self, trainer, pl_module):
+        each_me = copy.deepcopy(trainer.callback_metrics)
+        for k,v in each_me.items():
+            if k in self.all_metrics.keys():
+                self.all_metrics[k].append(v.item())
+            else:
+                self.all_metrics[k] = [v.item()]                
+                
+        # last validation epoch
+        every_n_epoch = pl_module.hparams['opt'].check_val_every_n_epoch
+        if pl_module.current_epoch == every_n_epoch*(trainer.max_epochs//every_n_epoch) - 1:
+            self.log_best()
+                
+    def log_best(self):
+        monitored = self.all_metrics[self.monitor]
+        if self.monitor_mode == 'min':
+            idx = np.argmin(np.array(monitored))
+        else:
+            idx = np.argmax(np.array(monitored))
+        
+        for k in self.metric:
+            self.log(k+'_best', self.all_metrics[k][idx])
