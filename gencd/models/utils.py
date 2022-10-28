@@ -59,7 +59,7 @@ def define_optimizer(net_params, opt):
 def define_metrics(opt_metric):
     metrics = {}
     if opt_metric:
-        smet = opt.metric.lower().split('_')
+        mets = opt_metric.lower().split('_')
         if 'iou' in mets:
             metrics['mIOU'] = MeanIoU(include_background=False)
         if 'f1' in mets:
