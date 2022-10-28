@@ -1,3 +1,8 @@
+'''Changes from original code
+- allow args.mode=='none' for not using pretrained in ResNet.init_weights()
+
+'''
+
 import math
 import torch
 import torch.nn as nn
@@ -257,6 +262,8 @@ class ResNet(nn.Module):
             pretrained = '../RS_CLS_finetune/output/resnet_50_224/epoch300/millionAID_224_None/0.0005_0.05_128/resnet/100/ckpt.pth'
         elif self.args.mode == 'seco':
             pretrained = '../pretrain_model/seco_resnet50_1m.pth'
+        elif self.args.mode == 'none':
+            pretrained = None
         else:
             raise NotImplementedError
 
@@ -295,7 +302,8 @@ class ResNet(nn.Module):
             self.load_state_dict(state_dict, False)
 
             print('load {}-{} weight: {}'.format(self.args.backbone, self.args.mode, pretrained))
-
+        elif pretrained is None:
+            print(f'not using pretrained for {self.args.backbone}')
         else:
             raise TypeError('pretrained must be a str or None')
 

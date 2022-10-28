@@ -1,0 +1,12 @@
+args:
+  backbone: resnet
+  mode: none
+config:
+  dec_depth: 8
+  enc_depth: 1
+  input_nc: 3
+  output_nc: 2
+  resnet_stages_num: 4
+  token_len: 4
+  with_pos: learned
+net_name: BIT_Transformer

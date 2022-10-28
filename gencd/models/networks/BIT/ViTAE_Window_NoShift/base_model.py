@@ -1,5 +1,5 @@
 '''Changes from original code
-- allow args.mode=='none' for not using pretrained in base_model
+- allow args.mode=='none' for not using pretrained in ViTAE_Window_NoShift_basic.init_weights()
 
 '''
 
