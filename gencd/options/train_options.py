@@ -51,6 +51,7 @@ class TrainOptions():
         
         # model & network
         parser = TrainOptions.add_model_specific_args(parser)
+        parser.add_argument('--metric', type=str, default='iou', help='iou, f1')
 
         # training parameters
         parser.add_argument('--train_only', action='store_true')

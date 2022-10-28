@@ -10,6 +10,8 @@ import torch.nn.functional as F
 from torch.optim import lr_scheduler
 import pytorch_lightning as pl
 
+from monai.metrics import MeanIoU, ConfusionMatrixMetric
+
 def get_scheduler(optimizer, opt):
     """Return a learning rate scheduler
     Parameters:
@@ -53,3 +55,14 @@ def define_optimizer(net_params, opt):
     else:
         return NotImplementedError(f'optimizer {opt.optimizer} is not implemented')
     return optimizer
+
+def define_metrics(opt_metric):
+    metrics = {}
+    if opt_metric:
+        smet = opt.metric.lower().split('_')
+        if 'iou' in mets:
+            metrics['mIOU'] = MeanIoU(include_background=False)
+        if 'f1' in mets:
+            metrics['F1'] = ConfusionMatrixMetric(include_background=False, metric_name='f1 score')
+    return metrics
+

@@ -81,7 +81,14 @@ class MyTrainer(pl.Trainer):
             
         # Save Best Validation Metric
         if 'metricvalid' in callbacks:
-            cb_metricvalid = MetricsBestValidCallback(['metric/val_mIOU'], opt.checkpoint_monitor, opt.checkpoint_monitor_mode)
+            metric_tgt = []
+            optmetrics = opt.metric.lower().split('_')
+            if 'iou' in optmetrics:
+                metric_tgt.append('metric/val_mIOU')
+            if 'f1' in optmetrics:
+                metric_tgt.append('metric/val_F1')
+            
+            cb_metricvalid = MetricsBestValidCallback(metric_tgt, opt.checkpoint_monitor, opt.checkpoint_monitor_mode)
             L.append(cb_metricvalid)
             
         # Results

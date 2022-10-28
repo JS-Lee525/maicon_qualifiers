@@ -29,6 +29,7 @@ class TestOptions():
         
         # model
         parser.add_argument('--load_pretrained_model', type=str, help='path to pretrained model (gencd)')
+        parser.add_argument('--metric', type=str, default='iou', help='iou, f1')
                         
         # trainer
         parser.add_argument('--callbacks', type=str, help='result')
