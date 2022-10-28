@@ -458,8 +458,8 @@ class Backbone(torch.nn.Module):
         return x
 
 ## just changed class name. same as BASE_Transformer
-class ViTAE_Transformer(Backbone):
 #class BASE_Transformer(Backbone):
+class BIT_Transformer(Backbone):
     """
     Resnet of 8 downsampling + BIT + bitemporal feature Differencing + a small CNN
     """
@@ -472,7 +472,7 @@ class ViTAE_Transformer(Backbone):
                  backbone='resnet18',
                  decoder_softmax=True, with_decoder_pos=None,
                  with_decoder=True):
-        super(ViTAE_Transformer, self).__init__(args, input_nc, output_nc,
+        super(BIT_Transformer, self).__init__(args, input_nc, output_nc,
                                              resnet_stages_num=resnet_stages_num,
                                                if_upsample_2x=if_upsample_2x,
                                                )

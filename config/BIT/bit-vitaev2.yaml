@@ -9,4 +9,4 @@ config:
   resnet_stages_num: 4
   token_len: 4
   with_pos: learned
-net_name: ViTAE_Transformer
+net_name: BIT_Transformer
