@@ -1,3 +1,5 @@
 pytorch-lightning
 monai
 einops
+# timm
+# mmcv
