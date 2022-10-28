@@ -1,2 +1,4 @@
 pytorch-lightning
 monai
+timm
+einops
