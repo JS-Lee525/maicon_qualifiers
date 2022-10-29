@@ -1,5 +1,5 @@
 pytorch-lightning
 monai
 einops
-# timm
-# mmcv
+timm # for BIT - Swin Transformer
+mmcv # for BIT - ResNet
