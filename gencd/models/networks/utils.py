@@ -1,3 +1,4 @@
+import argparse
 import copy
 import importlib
 import inspect
@@ -42,6 +43,14 @@ def define_network(net_config, net_module=None):
         cfg = yaml.load(f, Loader=yaml.FullLoader)
     net_name = cfg['net_name']
     config = cfg['config']
+    
+    # parse args/opt if any
+    for k in cfg.keys():
+        if k in ['args', 'opt']:
+            dummy = argparse.ArgumentParser()
+            dummyopt = dummy.parse_args(args=[])
+            dummyopt.__dict__.update(cfg[k])
+            config[k] = dummyopt
 
     netcls = recursive_find_python_class(net_name, net_module)
                   

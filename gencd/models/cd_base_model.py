@@ -11,12 +11,11 @@ from torch.optim import lr_scheduler
 import pytorch_lightning as pl
 
 from monai.inferers import sliding_window_inference
-from monai.metrics import MeanIoU
 from monai.networks import one_hot
 
 from .losses import define_loss
 from .networks.utils import define_network, load_pretrained_net
-from .utils import get_scheduler, define_optimizer
+from .utils import get_scheduler, define_optimizer, define_metrics
 
 class CDBaseModel(pl.LightningModule):
     def __init__(self, opt):
@@ -40,7 +39,7 @@ class CDBaseModel(pl.LightningModule):
         self.criterion = define_loss(opt.loss)
         
         # define metric
-        self.metric = MeanIoU()
+        self.metrics = define_metrics(opt.metric)                                                           
         
     ### predefined methods
     
@@ -72,16 +71,21 @@ class CDBaseModel(pl.LightningModule):
         loss = self.criterion(outputs, self.mask)
         
         bin_outputs = one_hot(outputs.argmax(1, keepdim=True), self.hparams['opt'].num_class)
-        self.metric(bin_outputs, self.mask)
+        for k in self.metrics.keys():
+            self.metrics[k](bin_outputs, self.mask)
         
         self.log(f'loss/val_loss', loss, batch_size=self.current_batch_size, on_step=True, on_epoch=True)
                     
         return loss
     
     def validation_epoch_end(self, outputs):
-        mean_val_metric = self.metric.aggregate().item()
-        self.metric.reset()
-        self.log(f'metric/val_mIOU', mean_val_metric)
+        for k in self.metrics.keys():
+            mean_metric = self.metrics[k].aggregate()
+            if isinstance(mean_metric, list):
+                mean_metric = mean_metric[0]
+            mean_metric = mean_metric.item()
+            self.metrics[k].reset()
+            self.log(f'metric/val_{k}', mean_metric)
     
     def predict_step(self, batch, batch_idx):
         return self._step_test(batch)
@@ -94,14 +98,19 @@ class CDBaseModel(pl.LightningModule):
             loss = self.criterion(outputs, self.mask)
             self.log(f'loss/test_loss', loss, batch_size=self.current_batch_size, on_step=True, on_epoch=True)
             bin_outputs = one_hot(outputs.argmax(1, keepdim=True), self.hparams['opt'].num_class)
-            self.metric(bin_outputs, self.mask) 
-        
+            for k in self.metrics.keys():
+                self.metrics[k](bin_outputs, self.mask)
+                    
         return outputs
 
     def test_epoch_end(self, outputs):
-        mean_test_metric = self.metric.aggregate().item()
-        self.metric.reset()
-        self.log(f'metric/test_mIOU', mean_test_metric)
+        for k in self.metrics.keys():
+            mean_metric = self.metrics[k].aggregate()
+            if isinstance(mean_metric, list):
+                mean_metric = mean_metric[0]
+            mean_metric = mean_metric.item()
+            self.metrics[k].reset()
+            self.log(f'metric/test_{k}', mean_metric)
         
     
     ### custom methods

@@ -10,6 +10,8 @@ import torch.nn.functional as F
 from torch.optim import lr_scheduler
 import pytorch_lightning as pl
 
+from monai.metrics import MeanIoU, ConfusionMatrixMetric
+
 def get_scheduler(optimizer, opt):
     """Return a learning rate scheduler
     Parameters:
@@ -21,14 +23,11 @@ def get_scheduler(optimizer, opt):
     For other schedulers (step, plateau, and cosine), we use the default PyTorch schedulers.
     See https://pytorch.org/docs/stable/optim.html for more details.
     """
-    '''
     if opt.lr_policy == 'linear':
         def lambda_rule(epoch):
-            lr_l = 1.0 - max(0, epoch + opt.epoch_count - opt.n_epochs) / float(opt.n_epochs_decay + 1)
-            return lr_l
+            return 1.0 - epoch / float(1 + opt.max_epochs)
         scheduler = lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda_rule)
-    '''
-    if opt.lr_policy == 'step':
+    elif opt.lr_policy == 'step':
         scheduler = lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.5)
     elif opt.lr_policy == 'plateau':
         scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.2, threshold=0.01, patience=5)
@@ -48,9 +47,22 @@ def get_scheduler(optimizer, opt):
 
 def define_optimizer(net_params, opt):
     if opt.optimizer.lower() == 'adam':
-        optimizer = torch.optim.Adam(net_params, opt.lr, betas=(0.5, 0.999), eps=1e-04)
+        optimizer = torch.optim.Adam(net_params, opt.lr, betas=(0.9, 0.999), eps=1e-04)
+    elif opt.optimizer.lower() == 'adamw':
+        optimizer = torch.optim.AdamW(net_params, opt.lr, betas=(0.9, 0.999), weight_decay=0.01, eps=1e-04)
     elif opt.optimizer.lower() == 'sgd':
         optimizer = torch.optim.SGD(net_params, opt.lr, weight_decay=3e-5, momentum=0.99, nesterov=True)
     else:
         return NotImplementedError(f'optimizer {opt.optimizer} is not implemented')
     return optimizer
+
+def define_metrics(opt_metric):
+    metrics = {}
+    if opt_metric:
+        mets = opt_metric.lower().split('_')
+        if 'iou' in mets:
+            metrics['mIOU'] = MeanIoU(include_background=False)
+        if 'f1' in mets:
+            metrics['F1'] = ConfusionMatrixMetric(include_background=False, metric_name='f1 score')
+    return metrics
+

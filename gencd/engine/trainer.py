@@ -3,7 +3,6 @@ import json
 import os
 import numpy as np
 from PIL import Image
-import SimpleITK as sitk
 from typing import Optional, Sequence, List, Tuple, Union
 import wandb
 
@@ -12,7 +11,9 @@ from torchvision.transforms import ToPILImage, ToTensor
 from torchvision.utils import make_grid
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
-from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
+from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger, WandbLogger
+
+from .callbacks import ResultsCallback, MetricsBestValidCallback
 
 class MyTrainer(pl.Trainer):
     '''Pytorch Lightning Trainer with custom callbacks, logger, args, etc.
@@ -78,6 +79,18 @@ class MyTrainer(pl.Trainer):
             cb_lrmonitor = LearningRateMonitor(logging_interval='epoch')
             L.append(cb_lrmonitor)
             
+        # Save Best Validation Metric
+        if 'metricvalid' in callbacks:
+            metric_tgt = []
+            optmetrics = opt.metric.lower().split('_')
+            if 'iou' in optmetrics:
+                metric_tgt.append('metric/val_mIOU')
+            if 'f1' in optmetrics:
+                metric_tgt.append('metric/val_F1')
+            
+            cb_metricvalid = MetricsBestValidCallback(metric_tgt, opt.checkpoint_monitor, opt.checkpoint_monitor_mode)
+            L.append(cb_metricvalid)
+            
         # Results
         if 'result' in callbacks:
             cb_result = ResultsCallback(opt.result_dir)
@@ -95,52 +108,16 @@ class MyTrainer(pl.Trainer):
         
         L = []
         if (opt.loggers):
-            if 'csv' in opt.loggers.lower():        # CSV Logger       
+            loggers = opt.loggers.lower().split('_')
+            
+            if 'csv' in loggers:        # CSV Logger       
                 L.append(CSVLogger(log_dir, name=log_name, version=log_version))
-            if 'tb' in opt.loggers.lower():
+            if 'tb' in loggers:
                 L.append(TensorBoardLogger(log_dir, name=log_name, version=log_version, sub_dir='tensorboard'))
-            if 'wandb' in opt.loggers.lower():
+            if 'wandb' in loggers:
                 L.append(WandbLogger(save_dir=opt.save_dir, project=opt.wandb_project, name=opt.wandb_name if opt.wandb_name else os.path.join(log_name, log_version)))
         
         if len(L)==0:
             L = False
         
         return L
-    
-# save results callback
-class ResultsCallback(pl.Callback):
-    '''Save results to SAVE_DIR
-    '''
-    def __init__(
-        self,
-        result_dir: Union[List[str], str] = './results',
-    ):
-        super().__init__()
-        if not isinstance(result_dir, list):
-            result_dir = [result_dir]
-        self.result_dir = result_dir
-    
-    # Callback method
-    def on_predict_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx=0):       
-        keys = batch['metadata']['key']
-        outs = outputs.detach().cpu().numpy()
-        
-        for i in range(outs.shape[0]):
-            n_img = outs[i].astype(np.float16)
-            fn = keys[i]           
-            
-            newpath = os.path.join(self.result_dir[dataloader_idx], f'{fn}.npy')
-            
-            np.save(newpath, n_img)
-    
-    def on_test_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx=0):
-        keys = batch['metadata']['key']
-        outs = outputs.detach().cpu().numpy()
-        
-        for i in range(outs.shape[0]):
-            n_img = outs[i].astype(np.float16)
-            fn = keys[i]           
-            
-            newpath = os.path.join(self.result_dir[dataloader_idx], f'{fn}.npy')
-            
-            np.save(newpath, n_img)
