@@ -1,3 +1,8 @@
+'''Changes from original code
+- allow args.mode=='none' for not using pretrained in swin.init_weights()
+
+'''
+
 # --------------------------------------------------------
 # Swin Transformer
 # Copyright (c) 2021 Microsoft
@@ -618,6 +623,8 @@ class swin(nn.Module):
             pretrained = '../Swin-Transformer-main/output/swin_tiny_patch4_window7_224/epoch120/swin_tiny_patch4_window7_224/default/ckpt.pth'
         elif self.args.mode == 'rsp_300':
             pretrained = '../Swin-Transformer-main/output/swin_tiny_patch4_window7_224/epoch300/swin_tiny_patch4_window7_224/default/ckpt.pth'
+        elif self.args.mode == 'none':
+            pretrained = None
         else:
             raise NotImplementedError
 
@@ -690,6 +697,8 @@ class swin(nn.Module):
             self.load_state_dict(state_dict, strict=False)
 
             print('load {}-{} weight: {}'.format(self.args.backbone, self.args.mode, pretrained))
+        elif pretrained is None:
+            print(f'not using pretrained for {self.args.backbone}')
         else:
             raise TypeError('pretrained must be a str or None')
 
