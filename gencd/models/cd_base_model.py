@@ -52,7 +52,7 @@ class CDBaseModel(pl.LightningModule):
     
     def forward(self, x1, x2):
         output = self.netC(x1, x2)
-        if isinstance(output, tuple):
+        if isinstance(output, tuple) or isinstance(output, list):
             output = output[-1]
         return output
             

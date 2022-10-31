@@ -1,3 +1,8 @@
+'''Changes from original code
+- img_size as argument for ViTAE and Swin via args.img_size
+
+'''
+
 import torch
 import torch.nn as nn
 from torch.nn import init
@@ -342,6 +347,7 @@ class Backbone(torch.nn.Module):
 
             self.backbone = swin(
                             args,
+                            pretrain_img_size=args.img_size,
                             embed_dim=96,
                             depths=[2, 2, 6, 2],
                             num_heads=[3, 6, 12, 24],
@@ -379,7 +385,8 @@ class Backbone(torch.nn.Module):
                             mlp_ratio=4., 
                             NC_group=[1, 32, 64, 128], 
                             RC_group=[1, 16, 32, 64],
-                            img_size=1024, 
+                            img_size=1024,
+                            #img_size=args.img_size,
                             window_size=7,
                             drop_path_rate=0.3,
                             frozen_stages=-1,
