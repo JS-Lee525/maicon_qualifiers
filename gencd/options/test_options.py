@@ -17,6 +17,7 @@ class TestOptions():
         parser.add_argument('--num_workers', default=4, type=int, help='# threads for loading data')
         parser.add_argument('--no_saveoptions', action='store_true')
         parser.add_argument('--mixed_precision', action='store_true', help='if True, use AMP')
+        parser.add_argument('--save_temp', action='store_true', help='only used in ensemble. if True, save individual results')
         
         # data
         parser.add_argument('--phase', type=str, help='name of dataset class')
@@ -28,7 +29,7 @@ class TestOptions():
         parser.add_argument('--batch_size_inference', default=1, type=int, help='batch size for inference')
         
         # model
-        parser.add_argument('--load_pretrained_model', type=str, help='path to pretrained model (gencd)')
+        parser.add_argument('--load_pretrained_model', type=str, nargs='+', help='path to pretrained model (gencd)')
         parser.add_argument('--metric', type=str, default='f1_iou', help='iou, f1')
                         
         # trainer

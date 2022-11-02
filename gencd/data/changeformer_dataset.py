@@ -61,7 +61,7 @@ class ChangeFormerDataset(Dataset):
             )
         else:
             self.augm = CDDataAugmentation(
-                img_size=self.img_size
+                img_size=self.img_size,
             )
             
         self.label_transform = 'norm'
