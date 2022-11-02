@@ -84,7 +84,7 @@ class MyTrainer(pl.Trainer):
             metric_tgt = []
             optmetrics = opt.metric.lower().split('_')
             if 'iou' in optmetrics:
-                metric_tgt.append('metric/val_mIOU')
+                metric_tgt.append('metric/val_mIoU')
             if 'f1' in optmetrics:
                 metric_tgt.append('metric/val_F1')
             

@@ -70,7 +70,8 @@ def define_metrics(opt_metric):
     if opt_metric:
         mets = opt_metric.lower().split('_')
         if 'iou' in mets:
-            metrics['mIOU'] = MeanIoU(include_background=False)
+            #metrics['mIoU'] = MeanIoU(include_background=False) # per-image iou
+            metrics['mIoU'] = ConfusionMatrixMetric(include_background=False, metric_name='threat score') # aggregate all confusion matrix and then calculate IoU
         if 'f1' in mets:
             metrics['F1'] = ConfusionMatrixMetric(include_background=False, metric_name='f1 score')
     return metrics
