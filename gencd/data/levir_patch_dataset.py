@@ -21,7 +21,7 @@ class LevirPatchDataset(BaseDataset):
         if self.phase == 'train':
             basedir = os.path.join(self.opt.datadir, 'train')
         elif self.phase == 'val':
-            basedir = os.path.join(self.opt.datadir, 'valid')
+            basedir = os.path.join(self.opt.datadir, 'val')
         elif self.phase == 'test':
             basedir = os.path.join(self.opt.datadir, 'test')
         
