@@ -21,7 +21,7 @@ class LEVIRPatchv0Dataset(LevirPatchDataset):
             self.transform = A.Compose([                
                 A.VerticalFlip(p=0.5),
                 A.HorizontalFlip(p=0.5),
-                #A.Rotate(limit=30, p=0.5),        
+                A.Rotate(limit=30, p=0.5),        
                 
                 #A.CropNonEmptyMaskIfExists(self.opt.patch_size, self.opt.patch_size, p=1),
                 #A.RandomCrop(self.opt.patch_size, self.opt.patch_size, p=1),
