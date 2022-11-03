@@ -59,10 +59,6 @@ class MyTrainer(pl.Trainer):
     
         # ModelCheckpoint
         if 'ckpt' in callbacks:
-            if opt.checkpoint_nooverwrite:
-                save_top_k = -1
-            else:
-                save_top_k = 1
             cb_checkpoint = ModelCheckpoint(
                 dirpath=os.path.join(opt.save_dir, 'checkpoint'),
                 every_n_epochs=opt.checkpoint_every_n_epochs,
@@ -84,7 +80,7 @@ class MyTrainer(pl.Trainer):
             metric_tgt = []
             optmetrics = opt.metric.lower().split('_')
             if 'iou' in optmetrics:
-                metric_tgt.append('metric/val_mIOU')
+                metric_tgt.append('metric/val_mIoU')
             if 'f1' in optmetrics:
                 metric_tgt.append('metric/val_F1')
             

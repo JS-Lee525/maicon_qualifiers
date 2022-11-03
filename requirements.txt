@@ -2,4 +2,4 @@ pytorch-lightning
 monai
 einops
 # timm # for BIT - Swin Transformer
-# mmcv # for BIT - ResNet
+# mmcv-full==1.6.0 # for ChangeFormer, BIT - ResNet

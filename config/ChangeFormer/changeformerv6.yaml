@@ -1,0 +1,7 @@
+config:
+  decoder_softmax: false
+  embed_dim: 256
+  img_size: 256
+  input_nc: 3
+  output_nc: 2
+net_name: ChangeFormerV6

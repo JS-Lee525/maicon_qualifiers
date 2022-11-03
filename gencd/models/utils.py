@@ -27,6 +27,15 @@ def get_scheduler(optimizer, opt):
         def lambda_rule(epoch):
             return 1.0 - epoch / float(1 + opt.max_epochs)
         scheduler = lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda_rule)
+    elif opt.lr_policy == 'linear_warmup':
+        # use warmup epoch 1 if max_epoch < 10, else 5
+        warmup = 1 if opt.max_epochs < 10 else 5
+        def lambda_rule(epoch):
+            if epoch < warmup:
+                return float(1 + epoch) / float(1 + warmup)
+            else:
+                return 1.0 - (epoch - warmup) / float(1 + opt.max_epochs - warmup)
+        scheduler = lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda_rule)
     elif opt.lr_policy == 'step':
         scheduler = lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.5)
     elif opt.lr_policy == 'plateau':
@@ -61,7 +70,8 @@ def define_metrics(opt_metric):
     if opt_metric:
         mets = opt_metric.lower().split('_')
         if 'iou' in mets:
-            metrics['mIOU'] = MeanIoU(include_background=False)
+            #metrics['mIoU'] = MeanIoU(include_background=False) # per-image iou
+            metrics['mIoU'] = ConfusionMatrixMetric(include_background=False, metric_name='threat score') # aggregate all confusion matrix and then calculate IoU
         if 'f1' in mets:
             metrics['F1'] = ConfusionMatrixMetric(include_background=False, metric_name='f1 score')
     return metrics

@@ -36,6 +36,20 @@ def recursive_find_python_class(class_name, current_module):
     return tr
 
 def define_network(net_config, net_module=None):
+    ## use specialized loaders, or else use general class
+    if net_module == 'build_opencd':
+        from mmcv.utils import Config
+        from mmseg.models import build_segmentor
+        import gencd.models.networks.opencd
+        
+        cfg = Config.fromfile(net_config)        
+        net = build_segmentor(
+            cfg.model,
+            train_cfg=cfg.get('train_cfg'),
+            test_cfg=cfg.get('test_cfg'))
+        net.init_weights()        
+        return net
+    
     if net_module is None:
         net_module = 'gencd.models.networks'
     
