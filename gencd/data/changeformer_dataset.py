@@ -15,8 +15,6 @@ from torchvision import transforms
 import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
 
-from .base_dataset import BaseDataset
-
 IMG_FOLDER_NAME = "A"
 IMG_POST_FOLDER_NAME = 'B'
 LIST_FOLDER_NAME = 'list'
@@ -61,7 +59,8 @@ class ChangeFormerDataset(Dataset):
             )
         else:
             self.augm = CDDataAugmentation(
-                img_size=self.img_size,
+                #img_size=self.img_size,
+                img_size=None,
             )
             
         self.label_transform = 'norm'
