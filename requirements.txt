@@ -4,3 +4,10 @@ einops
 timm # for BIT - Swin Transformer
 # mmcv-full==1.6.0 # for ChangeFormer, BIT - ResNet
 wandb
+glob
+numpy
+rasterio
+pickle
+opencv-python
+pathos
+mxnet
