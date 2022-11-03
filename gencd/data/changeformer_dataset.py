@@ -1,3 +1,6 @@
+'''Modified from https://github.com/wgcban/ChangeFormer/datasets/
+'''
+
 import glob
 import importlib
 import numpy as np
@@ -59,8 +62,7 @@ class ChangeFormerDataset(Dataset):
             )
         else:
             self.augm = CDDataAugmentation(
-                #img_size=self.img_size,
-                img_size=None,
+                img_size=self.img_size,
             )
             
         self.label_transform = 'norm'
