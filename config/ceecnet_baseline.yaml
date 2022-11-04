@@ -1,0 +1,10 @@
+config:
+  depth: 6
+  norm_type: 'GroupNorm'
+  norm_groups: 4
+  ftdepth: 5
+  NClasses: 2
+  nfilters_init: 32
+  psp_depth: 4
+  nheads_start: 4
+net_name: mantis_dn_cmtsk
