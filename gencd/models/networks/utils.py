@@ -49,6 +49,15 @@ def define_network(net_config, net_module=None):
             test_cfg=cfg.get('test_cfg'))
         net.init_weights()        
         return net
+
+    if net_module == 'ceecnet':
+        from gencd.models.networks.ceecnet.models.changedetection.mantis.mantis_dn import mantis_dn_cmtsk
+
+        cfg = Config.fromfile(net_config)
+        net = mantis_dn_cmtsk(**cfg)
+        net.initialize()
+
+        return net
     
     if net_module is None:
         net_module = 'gencd.models.networks'
