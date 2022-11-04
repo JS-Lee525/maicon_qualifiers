@@ -49,7 +49,7 @@ class LevirPatchDataset(BaseDataset):
                 im = Image.open(x)
                 
                 # padding for sliding window
-                old_sh = np.array(im.size)
+                old_sh = np.array(im.size[::-1])
                 new_sh = (np.ceil(np.divide(old_sh - crop_size, sliding_window_size)) * sliding_window_size).astype(int) + crop_size
                 pads = new_sh - old_sh
                 pads = np.array([[a//2, a-a//2] for a in pads.astype(int)])          
