@@ -16,6 +16,7 @@ class TrainOptions():
         parser.add_argument('--net_module', type=str, help='network module. if None, use current models.networks')
         parser.add_argument('--net_config', type=str, help='path to network config.yaml')
         parser.add_argument('--load_pretrained_network', type=str, help='path to pretrained network')
+        parser.add_argument('--load_pretrained_ddpm', type=str, help='path to pretrained ddpm')
         
         # model
         parser.add_argument('--model', type=str, default='cd_base', help='chooses which model to use.')

@@ -1,0 +1,57 @@
+distributed: false
+gpu_ids: null
+model:
+  beta_schedule:
+    test:
+      linear_end: 0.01
+      linear_start: 1.0e-06
+      n_timestep: 2000
+      schedule: linear
+    train:
+      linear_end: 0.01
+      linear_start: 1.0e-06
+      n_timestep: 2000
+      schedule: linear
+    val:
+      linear_end: 0.01
+      linear_start: 1.0e-06
+      n_timestep: 2000
+      schedule: linear
+  diffusion:
+    channels: 3
+    conditional: false
+    image_size: 256
+    loss: l2
+  finetune_norm: false
+  unet:
+    attn_res:
+    - 16
+    channel_multiplier:
+    - 1
+    - 2
+    - 4
+    - 8
+    - 8
+    dropout: 0.2
+    in_channel: 3
+    inner_channel: 128
+    norm_groups: 32
+    out_channel: 3
+    res_blocks: 2
+  which_model_G: sr3
+model_cd:
+  feat_scales:
+  - 2
+  - 5
+  - 8
+  - 11
+  - 14
+  feat_type: dec
+  loss_type: ce
+  out_channels: 2
+  output_cm_size: 256
+  t:
+  - 50
+  - 100
+  - 400
+phase: train
