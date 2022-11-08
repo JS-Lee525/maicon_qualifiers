@@ -37,6 +37,7 @@ class TrainOptions():
         parser.add_argument('--exp_name', type=str, default='exp', help='experiment name')
         parser.add_argument('--exp_number', type=int, default=0, help='if 0, make new folder under run_base_dir/exp_name. if >0, find existing folder or make new folder with the number. if folder exists, suffix is ignored.')
         parser.add_argument('--exp_suffix', type=str, default='', help='Becomes suffix of save_dir. e.g., run_base_dir/{exp_name}/{exp_number}_{exp_suffix}')
+        parser.add_argument('--fold', type=int, nargs='+', help='-1 for no fold. if use, e.g. 0 1 2 in 5-fold')
         parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
         parser.add_argument('--num_workers', default=4, type=int, help='# threads for loading data')
         parser.add_argument('--no_saveoptions', action='store_true')
