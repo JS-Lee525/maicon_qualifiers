@@ -14,7 +14,11 @@ if __name__ == '__main__':
     dm = MyDataModule(opt)
     model = create_model(opt)
     trainer = MyTrainer(dm)
-    trainer.fit(model, dm)
+    
+    if opt.resume_from_checkpoint:
+        trainer.fit(model, dm, ckpt_path=opt.resume_from_checkpoint)
+    else:
+        trainer.fit(model, dm)
     
     if not opt.train_only:
         # validation

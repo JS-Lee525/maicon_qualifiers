@@ -43,6 +43,7 @@ class TrainOptions():
         
         # data
         parser.add_argument('--datadir', type=str, help='path to data')
+        parser.add_argument('--dataset_split', type=str, help='path to dataset split.pkl')
         #parser.add_argument('--file_extension', type=str, default='png', help='case-sensitive image file extension')
         parser.add_argument('--dataset_mode', type=str, help='name of dataset class')
         parser.add_argument('--num_class', type=int, default=2, help='number of classes including background')
@@ -63,6 +64,7 @@ class TrainOptions():
         parser.add_argument('--optimizer', type=str, default='adam', help='adam or sgd')
                 
         # trainer parameters
+        parser.add_argument('--resume_from_checkpoint', type=str, help='path to checkpoint. for resume training.')
         parser.add_argument('--callbacks', type=str, help='result, ckpt, lr, metricvalid')
         parser.add_argument('--result_dir', type=str, help='save validation results. if none, use run_dir/result')
         parser.add_argument('--loggers', type=str, help='csv, tb, wandb')

@@ -23,6 +23,7 @@ class TestOptions():
         parser.add_argument('--phase', type=str, help='name of dataset class')
         parser.add_argument('--dataset_mode', type=str, help='name of dataset class')
         parser.add_argument('--datadir', type=str, help='path to data')
+        parser.add_argument('--dataset_split', type=str, help='path to dataset split.pkl')
         parser.add_argument('--num_class', type=int, default=2, help='number of classes including background')
         parser.add_argument('--patch_size', default=256, type=int, help='input patch size')
         parser.add_argument('--batch_size', default=1, type=int, help='batch size for sliding window')
