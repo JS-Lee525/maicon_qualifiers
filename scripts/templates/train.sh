@@ -5,16 +5,16 @@ exp_name=exp
 exp_number=1
 
 # data
-num_class=4
+num_class=3
 datadir=/temp/data/01_data
-dataset_mode=MaiconPatchv0
+dataset_mode=maicon_patch_v0
 patch_size=256
 patch_overlap=0
 split=/temp/maicon-split.pkl
 
 # model
 model=cd_base
-loss=ce
+loss=bce
 metric=f1_iou
 
 # training
@@ -44,11 +44,10 @@ load_pretrained_network=temp/pretrained/snunet-32-weight.pt
 
 # RUN
 python train.py \
---gpu_ids 0 \
+--seed_determinism 2147483647 --gpu_ids 0 \
 --exp_name ${exp_name} --exp_number ${exp_number} \
---seed_determinism 2147483647 \
 --num_class ${num_class} --datadir ${datadir} --dataset_mode ${dataset_mode} --patch_size ${patch_size} --patch_overlap ${patch_overlap} --dataset_split ${split} \
 --model ${model} --loss ${loss} --metric ${metric} \
 --batch_size ${batch_size} --batch_size_inference ${batch_size_inference} --max_epochs ${max_epochs} --lr ${lr} --lr_policy ${lr_policy} --optimizer ${optimizer} --fold ${fold} \
---callbacks ${callbacks} --check_val_every_n_epoch ${check_val_every_n_epoch} --checkpoint_every_n_epochs ${checkpoint_every_n_epochs} --checkpoint_filename ${checkpoint_filename} --checkpoint_monitor ${checkpoint_monitor} --checkpoint_monitor_mode ${checkpoint_monitor_mode} --loggers ${loggers} --wandb_project ${wandb_project} --checkpoint_nooverwrite \
+--callbacks ${callbacks} --check_val_every_n_epoch ${check_val_every_n_epoch} --checkpoint_every_n_epochs ${checkpoint_every_n_epochs} --checkpoint_filename ${checkpoint_filename} --checkpoint_monitor ${checkpoint_monitor} --checkpoint_monitor_mode ${checkpoint_monitor_mode} --loggers ${loggers} --wandb_project ${wandb_project} --checkpoint_nooverwrite --train_only \
 --net_module ${net_module} --net_config ${net_config} --load_pretrained_network ${load_pretrained_network}
