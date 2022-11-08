@@ -6,7 +6,7 @@ _base_ = [
 crop_size = (512, 512)
 model = dict(
     decode_head=dict(
-        num_classes=4,
+        num_classes=3,
         sampler=dict(type='OHEMPixelSampler', thresh=0.7, min_kept=100000)),
         # test_cfg=dict(mode='slide', crop_size=crop_size, stride=(crop_size[0]//2, crop_size[1]//2)),
     )

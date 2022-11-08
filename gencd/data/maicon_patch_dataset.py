@@ -103,7 +103,15 @@ class MaiconPatchDataset(BaseDataset):
                 mask_path = self.mask_paths[idx]
                 mask = (np.array(Image.open(mask_path).convert('L'))).astype(np.uint8)
                 h, w = mask.shape[:2]
-                mask = mask[:, w//2:w]                                 
+                mask1 = mask[:, :w//2]
+                mask2 = mask[:, w//2:]
+                
+                catmask = np.zeros((h, w//2, self.opt.num_class), dtype=np.uint8)
+                catmask[...,0][mask2==1] = 1
+                catmask[...,1][mask2==3] = 1
+                catmask[...,2][mask1==2] = 1
+                
+                mask = catmask
                 mask = np.expand_dims(mask, axis=-1)
                 mask = np.pad(mask, tuple([tuple(p) for p in pads]) + ((0,0),), 'constant', constant_values=0)
                 mask = mask[slice_func]
@@ -127,8 +135,15 @@ class MaiconPatchDataset(BaseDataset):
                 mask_path = self.mask_paths[index]
                 mask = (np.array(Image.open(mask_path).convert('L'))).astype(np.uint8)
                 h, w = mask.shape[:2]
-                mask = mask[:, w//2:w]   
-                mask = np.expand_dims(mask, axis=-1)
+                mask1 = mask[:, :w//2]
+                mask2 = mask[:, w//2:]
+                
+                catmask = np.zeros((h, w//2, self.opt.num_class), dtype=np.uint8)
+                catmask[...,0][mask2==1] = 1
+                catmask[...,1][mask2==3] = 1
+                catmask[...,2][mask1==2] = 1
+                
+                mask = catmask
                 metadata['mask_path'] = mask_path
             else:
                 mask = None
