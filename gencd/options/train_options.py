@@ -41,6 +41,7 @@ class TrainOptions():
         parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
         parser.add_argument('--num_workers', default=4, type=int, help='# threads for loading data')
         parser.add_argument('--no_saveoptions', action='store_true')
+        parser.add_argument('--seed_determinism', type=int, help='seed for set_determinism. None: no use. negative: use default value.')
         
         # data
         parser.add_argument('--datadir', type=str, help='path to data')

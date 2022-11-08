@@ -3,6 +3,8 @@ import os
 import shutil
 from tqdm.autonotebook import tqdm
 
+from monai.utils import set_determinism
+
 from gencd.data.datamodule import MyDataModule
 from gencd.engine.trainer import MyTrainer
 from gencd.models import create_model
@@ -11,6 +13,12 @@ from gencd.options import TrainOptions
 if __name__ == '__main__':
     topt = TrainOptions().parse()
 
+    if topt.seed_determinism:
+        if topt.seed_determinism < 0:
+            set_determinism()
+        else:
+            set_determinism(seed=topt.seed_determinism)
+    
     if topt.fold and (not -1 in topt.fold):
         for f in topt.fold:
             opt = copy.deepcopy(topt)
