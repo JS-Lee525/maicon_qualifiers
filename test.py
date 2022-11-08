@@ -13,7 +13,7 @@ if __name__ == '__main__':
     opt = TestOptions().parse()
         
     ### update from pretrained model checkpoint
-    ckpt = torch.load(opt.load_pretrained_model, map_location=torch.device('cpu'))
+    ckpt = torch.load(opt.load_pretrained_model[0], map_location=torch.device('cpu'))
     old_opt = ckpt['hyper_parameters']['opt']
     del ckpt
 

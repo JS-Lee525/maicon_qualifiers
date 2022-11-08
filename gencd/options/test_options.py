@@ -13,6 +13,7 @@ class TestOptions():
     def initialize(self, parser):
         # basic
         parser.add_argument('--run_base_dir', type=str, default='./results', help='models are saved here (train) or loaded from here (test)')
+        parser.add_argument('--fold', type=int, nargs='+', help='-1 for no fold. if use, e.g. 0 1 2 in 5-fold')
         parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
         parser.add_argument('--num_workers', default=4, type=int, help='# threads for loading data')
         parser.add_argument('--no_saveoptions', action='store_true')
@@ -23,6 +24,7 @@ class TestOptions():
         parser.add_argument('--phase', type=str, help='name of dataset class')
         parser.add_argument('--dataset_mode', type=str, help='name of dataset class')
         parser.add_argument('--datadir', type=str, help='path to data')
+        parser.add_argument('--dataset_split', type=str, help='path to dataset split.pkl')
         parser.add_argument('--num_class', type=int, default=2, help='number of classes including background')
         parser.add_argument('--patch_size', default=256, type=int, help='input patch size')
         parser.add_argument('--batch_size', default=1, type=int, help='batch size for sliding window')

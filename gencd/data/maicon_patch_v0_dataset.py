@@ -10,10 +10,10 @@ from torch.utils.data import Dataset
 import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
 
-from .levir_patch_dataset import LevirPatchDataset
+from .maicon_patch_dataset import MaiconPatchDataset
 from .transforms import ComposeList
 
-class LEVIRPatchv0Dataset(LevirPatchDataset):    
+class MaiconPatchv0Dataset(MaiconPatchDataset):    
     ## override this to define self.transform
     def prepare_transforms(self):
         self.transform = None

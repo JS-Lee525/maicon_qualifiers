@@ -16,6 +16,7 @@ class TrainOptions():
         parser.add_argument('--net_module', type=str, help='network module. if None, use current models.networks')
         parser.add_argument('--net_config', type=str, help='path to network config.yaml')
         parser.add_argument('--load_pretrained_network', type=str, help='path to pretrained network')
+        parser.add_argument('--load_pretrained_ddpm', type=str, help='path to pretrained ddpm')
         
         # model
         parser.add_argument('--model', type=str, default='cd_base', help='chooses which model to use.')
@@ -36,12 +37,15 @@ class TrainOptions():
         parser.add_argument('--exp_name', type=str, default='exp', help='experiment name')
         parser.add_argument('--exp_number', type=int, default=0, help='if 0, make new folder under run_base_dir/exp_name. if >0, find existing folder or make new folder with the number. if folder exists, suffix is ignored.')
         parser.add_argument('--exp_suffix', type=str, default='', help='Becomes suffix of save_dir. e.g., run_base_dir/{exp_name}/{exp_number}_{exp_suffix}')
+        parser.add_argument('--fold', type=int, nargs='+', help='-1 for no fold. if use, e.g. 0 1 2 in 5-fold')
         parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
         parser.add_argument('--num_workers', default=4, type=int, help='# threads for loading data')
         parser.add_argument('--no_saveoptions', action='store_true')
+        parser.add_argument('--seed_determinism', type=int, help='seed for set_determinism. None: no use. negative: use default value.')
         
         # data
         parser.add_argument('--datadir', type=str, help='path to data')
+        parser.add_argument('--dataset_split', type=str, help='path to dataset split.pkl')
         #parser.add_argument('--file_extension', type=str, default='png', help='case-sensitive image file extension')
         parser.add_argument('--dataset_mode', type=str, help='name of dataset class')
         parser.add_argument('--num_class', type=int, default=2, help='number of classes including background')
@@ -62,6 +66,7 @@ class TrainOptions():
         parser.add_argument('--optimizer', type=str, default='adam', help='adam or sgd')
                 
         # trainer parameters
+        parser.add_argument('--resume_from_checkpoint', type=str, help='path to checkpoint. for resume training.')
         parser.add_argument('--callbacks', type=str, help='result, ckpt, lr, metricvalid')
         parser.add_argument('--result_dir', type=str, help='save validation results. if none, use run_dir/result')
         parser.add_argument('--loggers', type=str, help='csv, tb, wandb')

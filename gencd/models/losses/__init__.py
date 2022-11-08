@@ -1,6 +1,6 @@
 import re
 import torch.nn as nn
-from monai.losses import DiceLoss, DiceCELoss, FocalLoss #, DiceFocalLoss
+from monai.losses import DiceLoss, DiceCELoss, FocalLoss, TverskyLoss #, DiceFocalLoss
 from .dice import DiceFocalLoss
 
 def define_loss(loss_name):
@@ -15,7 +15,7 @@ def define_loss(loss_name):
     elif loss_name.lower() == 'dicece':
         loss = DiceCELoss(softmax=True, include_background=False, smooth_nr=eps, smooth_dr=eps,)
     elif loss_name.lower() == 'dicefocal':
-        loss = DiceFocalLoss(softmax=True, gamma=2, focal_weight=0.5, include_background=False, smooth_nr=eps, smooth_dr=eps,)
+        loss = DiceFocalLoss(softmax=True, gamma=2, focal_weight=0.5, include_background=False, smooth_nr=eps, smooth_dr=eps,)       
     elif loss_name.lower() == 'focal_bg':
         loss = FocalLoss(include_background=True, gamma=2, weight=0.5)
     elif loss_name.lower() == 'dice_bg':
@@ -24,6 +24,8 @@ def define_loss(loss_name):
         loss = DiceCELoss(softmax=True, include_background=True, smooth_nr=eps, smooth_dr=eps,)
     elif loss_name.lower() == 'dicefocal_bg':
         loss = DiceFocalLoss(softmax=True, gamma=2, focal_weight=0.5, include_background=True, smooth_nr=eps, smooth_dr=eps,)
+    elif loss_name.lower() == 'tversky':
+        loss = TverskyLoss(softmax=True, include_background=True, smooth_nr=eps, smooth_dr=eps,)
     else:
         raise NotImplementedError(f'loss name [{loss_name}] is not recognized')        
     return loss

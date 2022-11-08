@@ -1,3 +1,6 @@
+'''Modified from https://github.com/wgcban/ChangeFormer/datasets/
+'''
+
 import glob
 import importlib
 import numpy as np
@@ -14,8 +17,6 @@ from torchvision import transforms
 
 import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
-
-from .base_dataset import BaseDataset
 
 IMG_FOLDER_NAME = "A"
 IMG_POST_FOLDER_NAME = 'B'
