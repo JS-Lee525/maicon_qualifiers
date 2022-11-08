@@ -42,6 +42,7 @@ class TrainOptions():
         parser.add_argument('--num_workers', default=4, type=int, help='# threads for loading data')
         parser.add_argument('--no_saveoptions', action='store_true')
         parser.add_argument('--seed_determinism', type=int, help='seed for set_determinism. None: no use. negative: use default value.')
+        parser.add_argument('--max_dataset_size', type=int, default=float("inf"), help='Maximum number of samples allowed per dataset. If the dataset directory contains more than max_dataset_size, only a subset is loaded.')
         
         # data
         parser.add_argument('--datadir', type=str, help='path to data')

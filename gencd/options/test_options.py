@@ -19,6 +19,7 @@ class TestOptions():
         parser.add_argument('--no_saveoptions', action='store_true')
         parser.add_argument('--mixed_precision', action='store_true', help='if True, use AMP')
         parser.add_argument('--save_temp', action='store_true', help='only used in ensemble. if True, save individual results')
+        parser.add_argument('--max_dataset_size', type=int, default=float("inf"), help='Maximum number of samples allowed per dataset. If the dataset directory contains more than max_dataset_size, only a subset is loaded.')
         
         # data
         parser.add_argument('--phase', type=str, help='name of dataset class')
