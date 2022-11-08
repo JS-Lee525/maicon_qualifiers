@@ -72,7 +72,12 @@ def define_metrics(opt_metric):
         if 'iou' in mets:
             #metrics['mIoU'] = MeanIoU(include_background=False) # per-image iou
             metrics['mIoU'] = ConfusionMatrixMetric(include_background=True, metric_name='threat score') # aggregate all confusion matrix and then calculate IoU
+        if 'mciou' in mets: # multiclass
+            metrics['mIoU'] = ConfusionMatrixMetric(include_background=False, metric_name='threat score')
         if 'f1' in mets:
             metrics['F1'] = ConfusionMatrixMetric(include_background=True, metric_name='f1 score')
+        if 'mcf1' in mets: # multiclass
+            metrics['F1'] = ConfusionMatrixMetric(include_background=False, metric_name='f1 score')
+        
     return metrics
 
