@@ -106,13 +106,13 @@ class MaiconPatchDataset(BaseDataset):
                 mask1 = mask[:, :w//2]
                 mask2 = mask[:, w//2:]
                 
-                catmask = np.zeros((h, w//2, self.opt.num_class), dtype=np.uint8)
+                catmask = np.zeros((h, w//2, self.opt.num_class), dtype=np.float32)
                 catmask[...,0][mask2==1] = 1
                 catmask[...,1][mask2==3] = 1
                 catmask[...,2][mask1==2] = 1
                 
                 mask = catmask
-                mask = np.expand_dims(mask, axis=-1)
+                
                 mask = np.pad(mask, tuple([tuple(p) for p in pads]) + ((0,0),), 'constant', constant_values=0)
                 mask = mask[slice_func]
                 metadata['mask_path'] = mask_path
@@ -138,7 +138,7 @@ class MaiconPatchDataset(BaseDataset):
                 mask1 = mask[:, :w//2]
                 mask2 = mask[:, w//2:]
                 
-                catmask = np.zeros((h, w//2, self.opt.num_class), dtype=np.uint8)
+                catmask = np.zeros((h, w//2, self.opt.num_class), dtype=np.float32)
                 catmask[...,0][mask2==1] = 1
                 catmask[...,1][mask2==3] = 1
                 catmask[...,2][mask1==2] = 1

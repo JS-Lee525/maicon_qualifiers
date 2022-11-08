@@ -8,6 +8,8 @@ def define_loss(loss_name):
     
     if loss_name.lower() == 'ce':
         loss = nn.CrossEntropyLoss()
+    elif loss_name.lower() == 'bce':
+        loss = nn.BCEWithLogitsLoss()
     elif loss_name.lower() == 'focal':
         loss = FocalLoss(include_background=False, gamma=2, weight=0.5)
     elif loss_name.lower() == 'dice':

@@ -70,9 +70,10 @@ class CDBaseModel(pl.LightningModule):
         
         loss = self.criterion(outputs, self.mask)
         
-        bin_outputs = one_hot(outputs.argmax(1, keepdim=True), self.hparams['opt'].num_class)
+        bin_outputs = (torch.sigmoid(outputs) > 0.5)
+        #bin_outputs = one_hot(outputs.argmax(1, keepdim=True), self.hparams['opt'].num_class)
         for k in self.metrics.keys():
-            self.metrics[k](bin_outputs, self.mask)
+            self.metrics[k](bin_outputs.float(), self.mask.float())
         
         self.log(f'loss/val_loss', loss, batch_size=self.current_batch_size, on_step=True, on_epoch=True)
                     
@@ -80,12 +81,13 @@ class CDBaseModel(pl.LightningModule):
     
     def validation_epoch_end(self, outputs):
         for k in self.metrics.keys():
-            mean_metric = self.metrics[k].aggregate()
-            if isinstance(mean_metric, list):
-                mean_metric = mean_metric[0]
-            mean_metric = mean_metric.item()
-            self.metrics[k].reset()
-            self.log(f'metric/val_{k}', mean_metric)
+            if self.metrics[k].get_buffer() is not None:
+                mean_metric = self.metrics[k].aggregate()
+                if isinstance(mean_metric, list):
+                    mean_metric = mean_metric[0]
+                mean_metric = mean_metric.item()
+                self.metrics[k].reset()
+                self.log(f'metric/val_{k}', mean_metric)
     
     def predict_step(self, batch, batch_idx):
         return self._step_test(batch)
@@ -97,20 +99,22 @@ class CDBaseModel(pl.LightningModule):
         if 'mask' in batch.keys():
             loss = self.criterion(outputs, self.mask)
             self.log(f'loss/test_loss', loss, batch_size=self.current_batch_size, on_step=True, on_epoch=True)
-            bin_outputs = one_hot(outputs.argmax(1, keepdim=True), self.hparams['opt'].num_class)
+            bin_outputs = (torch.sigmoid(outputs) > 0.5)
+            #bin_outputs = one_hot(outputs.argmax(1, keepdim=True), self.hparams['opt'].num_class)
             for k in self.metrics.keys():
-                self.metrics[k](bin_outputs, self.mask)
+                self.metrics[k](bin_outputs.float(), self.mask.float())
                     
         return outputs
 
     def test_epoch_end(self, outputs):
         for k in self.metrics.keys():
-            mean_metric = self.metrics[k].aggregate()
-            if isinstance(mean_metric, list):
-                mean_metric = mean_metric[0]
-            mean_metric = mean_metric.item()
-            self.metrics[k].reset()
-            self.log(f'metric/test_{k}', mean_metric)
+            if self.metrics[k].get_buffer() is not None:
+                mean_metric = self.metrics[k].aggregate()
+                if isinstance(mean_metric, list):
+                    mean_metric = mean_metric[0]
+                mean_metric = mean_metric.item()
+                self.metrics[k].reset()
+                self.log(f'metric/test_{k}', mean_metric)
         
     
     ### custom methods
@@ -121,7 +125,8 @@ class CDBaseModel(pl.LightningModule):
         self.current_batch_size = batch['image'].shape[0]
         
         if 'mask' in batch.keys():
-            self.mask = one_hot(batch['mask'], self.hparams['opt'].num_class)
+            #self.mask = one_hot(batch['mask'], self.hparams['opt'].num_class)
+            self.mask = batch['mask']
     
     def forward_test(self, xs):
         nch = int(xs.shape[1])
