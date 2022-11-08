@@ -67,7 +67,8 @@ class MyTrainer(pl.Trainer):
                 filename=opt.checkpoint_filename,
                 auto_insert_metric_name=False,
                 save_weights_only=not opt.save_fullmodel,
-                save_top_k=(-1 if opt.checkpoint_nooverwrite else 1),
+                save_top_k=opt.checkpoint_save_top_k,
+                #save_top_k=(-1 if opt.checkpoint_nooverwrite else 1),
             )
             L.append(cb_checkpoint)
         # LearingRateMonitor
