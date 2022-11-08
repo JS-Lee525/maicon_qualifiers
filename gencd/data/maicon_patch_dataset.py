@@ -31,6 +31,10 @@ class MaiconPatchDataset(BaseDataset):
         self.image_paths = sorted(glob.glob(os.path.join(self.image_dir, '*.png')))
         self.mask_paths = sorted(glob.glob(os.path.join(self.mask_dir, '*.png')))
         
+        _size = min(len(self.image_paths), opt.max_dataset_size)
+        self.image_paths = self.image_paths[:_size]
+        self.mask_paths = self.mask_paths[:_size]
+        
         print(f'image: {len(self.image_paths)}\nmask: {len(self.mask_paths)}')
         
         self.keys = [os.path.basename(x).split('.')[0] for x in self.image_paths]
