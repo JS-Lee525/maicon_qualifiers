@@ -6,11 +6,11 @@ exp_number=1
 
 # data
 num_class=3
-datadir=/temp/data/01_data
+datadir=./temp/data/01_data
 dataset_mode=maicon_patch_v0
 patch_size=256
 patch_overlap=0
-split=/temp/maicon-split.pkl
+split=./temp/maicon-split.pkl
 
 # model
 model=cd_base
@@ -18,8 +18,8 @@ loss=bce
 metric=f1_iou
 
 # training
-batch_size=16
-batch_size_inference=2
+batch_size=24
+batch_size_inference=1
 max_epochs=100
 lr=0.001
 lr_policy=linear
@@ -38,8 +38,12 @@ wandb_project=maicon
 
 # network
 net_module=gencd.models.networks
-net_config=config/snunet_ch4.yaml
+net_config=config/snunet_ch3.yaml
 load_pretrained_network=temp/pretrained/snunet-32-weight.pt
+
+
+#Valid TEST
+# max_data=100
 
 
 # RUN
