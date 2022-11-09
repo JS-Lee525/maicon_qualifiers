@@ -139,11 +139,23 @@ class CDBaseModel(pl.LightningModule):
     
     def _step_test(self, batch):
         self.set_input(batch)
-        images = torch.cat((self.image, self.image2), dim=1)
-        roi_size = (self.hparams['opt'].patch_size, self.hparams['opt'].patch_size)
+        _resize = (self.hparams['opt'].patch_resize_factor != 1)
+        if _resize:
+            h, w = self.image.shape[-2:]
+            nh, nw = int(h/self.hparams['opt'].patch_resize_factor), int(w/self.hparams['opt'].patch_resize_factor)
+            im1 = F.interpolate(self.image, size=(nh, nw), mode='bicubic')
+            im2 = F.interpolate(self.image2, size=(nh, nw), mode='bicubic')
+            images = torch.cat((im1, im2), dim=1)
+        else:
+            images = torch.cat((self.image, self.image2), dim=1)
+        roi_size = (int(self.hparams['opt'].patch_size/self.hparams['opt'].patch_resize_factor), int(self.hparams['opt'].patch_size/self.hparams['opt'].patch_resize_factor))
         sw_batch_size = self.hparams['opt'].batch_size
         
         outputs = sliding_window_inference(images, roi_size, sw_batch_size, self.forward_test, overlap=0.5, mode='gaussian')
+        
+        if _resize:
+            h, w = self.image.shape[-2:]
+            outputs = F.interpolate(outputs, size=(h, w), mode='bicubic')
         
         return outputs
     

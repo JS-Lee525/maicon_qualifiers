@@ -52,6 +52,7 @@ class TrainOptions():
         parser.add_argument('--num_class', type=int, default=2, help='number of classes including background')
         parser.add_argument('--patch_size', default=256, type=int, help='input patch size')
         parser.add_argument('--patch_overlap', default=0, type=float, help='for patch-based dataloader. not used in random crop')
+        parser.add_argument('--patch_resize_factor', default=1, type=float, help='resize patch. 2 means half')
         parser.add_argument('--batch_size', default=1, type=int, help='batch size for train')
         parser.add_argument('--batch_size_inference', default=1, type=int, help='batch size for inference')
         

@@ -28,6 +28,7 @@ class TestOptions():
         parser.add_argument('--dataset_split', type=str, help='path to dataset split.pkl')
         parser.add_argument('--num_class', type=int, default=2, help='number of classes including background')
         parser.add_argument('--patch_size', default=256, type=int, help='input patch size')
+        parser.add_argument('--patch_resize_factor', default=1, type=float, help='resize patch. 2 means half')
         parser.add_argument('--batch_size', default=1, type=int, help='batch size for sliding window')
         parser.add_argument('--batch_size_inference', default=1, type=int, help='batch size for inference')
         
