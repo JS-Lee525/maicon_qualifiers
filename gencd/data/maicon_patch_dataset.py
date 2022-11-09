@@ -111,9 +111,9 @@ class MaiconPatchDataset(BaseDataset):
                 mask2 = mask[:, w//2:]
                 
                 catmask = np.zeros((h, w//2, self.opt.num_class), dtype=np.float32)
-                catmask[...,0][mask2==1] = 1
-                catmask[...,1][mask2==3] = 1
-                catmask[...,2][mask1==2] = 1
+                catmask[...,0][mask2==1] = 1 # 신축
+                catmask[...,2][mask2==3] = 1 # 갱신
+                catmask[...,1][mask1==2] = 1 # 소멸
                 
                 mask = catmask
                 
@@ -143,9 +143,9 @@ class MaiconPatchDataset(BaseDataset):
                 mask2 = mask[:, w//2:]
                 
                 catmask = np.zeros((h, w//2, self.opt.num_class), dtype=np.float32)
-                catmask[...,0][mask2==1] = 1
-                catmask[...,1][mask2==3] = 1
-                catmask[...,2][mask1==2] = 1
+                catmask[...,0][mask2==1] = 1 # 신축
+                catmask[...,2][mask2==3] = 1 # 갱신
+                catmask[...,1][mask1==2] = 1 # 소멸
                 
                 mask = catmask
                 metadata['mask_path'] = mask_path

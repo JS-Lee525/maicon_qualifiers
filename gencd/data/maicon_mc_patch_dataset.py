@@ -112,9 +112,9 @@ class MaiconMCPatchDataset(BaseDataset):
                 mask2 = mask[:, w//2:]
                 
                 catmask = np.zeros((h, w//2), dtype=np.uint8)
-                catmask[mask1==2] = 2
-                catmask[mask2==1] = 1
-                catmask[mask2==3] = 3
+                catmask[mask1==2] = 2 # 소멸
+                catmask[mask2==1] = 1 # 신축
+                catmask[mask2==3] = 3 # 갱신
                 
                 mask = np.expand_dims(catmask, axis=-1)
                 
