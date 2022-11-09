@@ -24,7 +24,8 @@ class ResultsCallback(pl.Callback):
     # Callback method
     def on_predict_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx=0):       
         keys = batch['metadata']['key']
-        outs = outputs.detach().cpu().numpy()
+        #outs = outputs.detach().cpu().numpy()
+        outs = pl_module.outputs.detach().cpu().numpy()
         
         for i in range(outs.shape[0]):
             n_img = outs[i].astype(np.float16)
@@ -36,7 +37,8 @@ class ResultsCallback(pl.Callback):
     
     def on_test_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx=0):
         keys = batch['metadata']['key']
-        outs = outputs.detach().cpu().numpy()
+        #outs = outputs.detach().cpu().numpy()
+        outs = pl_module.outputs.detach().cpu().numpy()
         
         for i in range(outs.shape[0]):
             n_img = outs[i].astype(np.float16)

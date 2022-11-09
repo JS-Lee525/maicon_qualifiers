@@ -90,7 +90,9 @@ class CDMultiClassModel(pl.LightningModule):
                 self.log(f'metric/val_{k}', mean_metric)
     
     def predict_step(self, batch, batch_idx):
-        return self._step_test(batch)
+        outputs = self._step_test(batch)
+        self.outputs = outputs
+        return None
     
     def test_step(self, batch, batch_idx):
         outputs = self._step_test(batch)
@@ -103,8 +105,8 @@ class CDMultiClassModel(pl.LightningModule):
             bin_outputs = one_hot(outputs.argmax(1, keepdim=True), self.hparams['opt'].num_class)
             for k in self.metrics.keys():
                 self.metrics[k](bin_outputs.float(), self.mask.float())
-                    
-        return outputs
+        self.outputs = outputs            
+        return None
 
     def test_epoch_end(self, outputs):
         for k in self.metrics.keys():
