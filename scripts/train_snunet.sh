@@ -8,7 +8,7 @@ exp_number=1
 num_class=3
 datadir=./temp/data/01_data
 dataset_mode=maicon_patch_v0
-patch_size=256
+patch_size=512
 patch_overlap=0
 split=./temp/maicon-split.pkl
 
