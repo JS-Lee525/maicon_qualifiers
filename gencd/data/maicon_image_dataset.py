@@ -35,7 +35,7 @@ class MaiconImageDataset(BaseDataset):
         self.image_paths = self.image_paths[:_size]
         self.mask_paths = self.mask_paths[:_size]
         
-        print(f'image: {len(self.image_paths)}\nmask: {len(self.mask_paths)}')
+        
         
         self.keys = [os.path.basename(x).split('.')[0] for x in self.image_paths]
         
@@ -51,7 +51,9 @@ class MaiconImageDataset(BaseDataset):
                 self.image_paths = [self.image_paths[i] for i,x in enumerate(self.keys) if x in self.ds_split[cfold]['valid']]
                 self.mask_paths = [self.mask_paths[i] for i,x in enumerate(self.keys) if x in self.ds_split[cfold]['valid']]
                 self.keys = [x for x in self.keys if x in self.ds_split[cfold]['valid']]
-                                   
+                         
+        print(f'image: {len(self.image_paths)}\nmask: {len(self.mask_paths)}')
+                    
         print(f'keys: {len(self.keys)}')
     
     ## override this to read data by index. must return image, image2, mask or image, image2, None.
