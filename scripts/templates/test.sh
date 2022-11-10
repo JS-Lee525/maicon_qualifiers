@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # basic
-run_base_dir=./temp/result/exp/00001/result_test
+run_base_dir=/content/drive/MyDrive/maicon_qualifiers/result/bit_transformer001
 phase=test
 load_pretrained_model="./runs/exp/00001/checkpoint/epoch=00049_val_loss=0.2245.ckpt"
 
@@ -10,7 +10,7 @@ num_class=3
 datadir=/workspace/maicon_qualifiers/temp/data/01_data
 dataset_mode=maicon_patch_v0
 patch_size=256
-batch_size=16
+batch_size=24
 batch_size_inference=1
 
 # model
