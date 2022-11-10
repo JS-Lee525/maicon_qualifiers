@@ -2,7 +2,7 @@ import glob
 import importlib
 import numpy as np
 import os
-import pickle5 as pickle
+import pickle
 from PIL import Image
 
 import torch
