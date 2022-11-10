@@ -151,7 +151,7 @@ class CDBaseModel(pl.LightningModule):
         roi_size = (int(self.hparams['opt'].patch_size/self.hparams['opt'].patch_resize_factor), int(self.hparams['opt'].patch_size/self.hparams['opt'].patch_resize_factor))
         sw_batch_size = self.hparams['opt'].batch_size
         
-        outputs = sliding_window_inference(images, roi_size, sw_batch_size, self.forward_test, overlap=0.5, mode='gaussian')
+        outputs = sliding_window_inference(images, roi_size, sw_batch_size, self.forward_test, overlap=self.hparams['opt'].patch_overlap_inference, mode='gaussian')
         
         if _resize:
             h, w = self.image.shape[-2:]
