@@ -2,7 +2,7 @@
 
 # basic
 exp_name=exp
-exp_number=1
+exp_number=2
 
 # data
 num_class=3
@@ -29,7 +29,7 @@ fold=2
 callbacks=lr_ckpt_metricvalid
 check_val_every_n_epoch=1
 checkpoint_every_n_epochs=1
-checkpoint_filename="bit_epoch={epoch:05d}_val_mIoU={metric/val_mIoU:.4f}_val_loss={loss/val_loss:.4f}"
+checkpoint_filename="bit_fold2_randcrop_0.2_epoch={epoch:05d}_val_mIoU={metric/val_mIoU:.4f}_val_loss={loss/val_loss:.4f}"
 checkpoint_monitor=metric/val_mIoU
 checkpoint_monitor_mode=max
 loggers=wandb

@@ -27,8 +27,8 @@ class MaiconImagev0Dataset(MaiconImageDataset):
                 #A.CropNonEmptyMaskIfExists(self.opt.patch_size, self.opt.patch_size, p=1),
                 #A.RandomCrop(self.opt.patch_size, self.opt.patch_size, p=1),
                 A.OneOf([
-                    A.CropNonEmptyMaskIfExists(self.opt.patch_size, self.opt.patch_size, p=0.9),
-                    A.RandomCrop(self.opt.patch_size, self.opt.patch_size, p=0.1),
+                    A.CropNonEmptyMaskIfExists(self.opt.patch_size, self.opt.patch_size, p=0.8),
+                    A.RandomCrop(self.opt.patch_size, self.opt.patch_size, p=0.2),
                 ], p=1.0),                   
             ]
             
