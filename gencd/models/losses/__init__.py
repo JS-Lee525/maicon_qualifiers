@@ -1,4 +1,5 @@
 import re
+import torch
 import torch.nn as nn
 from monai.losses import DiceLoss, DiceCELoss, FocalLoss, TverskyLoss #, DiceFocalLoss
 from .dice import DiceFocalLoss
@@ -10,6 +11,9 @@ def define_loss(loss_name):
         loss = nn.CrossEntropyLoss()
     elif loss_name.lower() == 'bce':
         loss = nn.BCEWithLogitsLoss()
+    elif bool(re.match(r"bce(_[0-9]+)+", loss_name.lower())):
+        pos_weight = torch.tensor([float(x) for x in loss_name.lower().split('_')[1:]])[:,None,None]
+        loss = nn.BCEWithLogitsLoss(pos_weight=pos_weight) 
     elif loss_name.lower() == 'focal':
         loss = FocalLoss(include_background=False, gamma=2, weight=0.5)
     elif loss_name.lower() == 'dice':
