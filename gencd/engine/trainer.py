@@ -112,7 +112,14 @@ class MyTrainer(pl.Trainer):
             if 'tb' in loggers:
                 L.append(TensorBoardLogger(log_dir, name=log_name, version=log_version, sub_dir='tensorboard'))
             if 'wandb' in loggers:
-                L.append(WandbLogger(save_dir=opt.save_dir, project=opt.wandb_project, name=opt.wandb_name if opt.wandb_name else os.path.join(log_name, log_version)))
+                w_name = opt.wandb_name if opt.wandb_name else os.path.join(log_name, log_version)
+                if '/' in opt.wandb_project:
+                    entity = opt.wandb_project.split('/')[0]
+                    project = opt.wandb_project.split('/')[1]
+                    wlogger = WandbLogger(save_dir=opt.save_dir, project=project, entity=entity, name=w_name)
+                else:
+                    wlogger = WandbLogger(save_dir=opt.save_dir, project=opt.wandb_project, name=w_name)
+                L.append(wlogger)
         
         if len(L)==0:
             L = False
