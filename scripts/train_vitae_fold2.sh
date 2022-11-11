@@ -2,12 +2,12 @@
 
 # basic
 exp_name=exp
-exp_number=1
+exp_number=2
 
 # data
 num_class=3
 datadir=/content/drive/MyDrive/maicon
-dataset_mode=maicon_image_v0
+dataset_mode=maicon_image_v1
 patch_size=512
 split=./maicon-split-clean.pkl
 patch_resize_factor=2
@@ -23,13 +23,13 @@ max_epochs=200
 lr=0.001
 lr_policy=linear
 optimizer=adamw
-fold=0
+fold=2
 
 # trainer
 callbacks=lr_ckpt_metricvalid
 check_val_every_n_epoch=1
 checkpoint_every_n_epochs=1
-checkpoint_filename="bit_epoch={epoch:05d}_val_mIoU={metric/val_mIoU:.4f}_val_loss={loss/val_loss:.4f}"
+checkpoint_filename="bit_fold2_cosine_epoch={epoch:05d}_val_mIoU={metric/val_mIoU:.4f}_val_loss={loss/val_loss:.4f}"
 checkpoint_monitor=metric/val_mIoU
 checkpoint_monitor_mode=max
 loggers=wandb
@@ -46,7 +46,7 @@ load_pretrained_network=/content/drive/MyDrive/maicon_prep-HoJoon/gencd/models/n
 patch_overlap=0
 # RUN
 python train.py \
---seed_determinism 2147483647 --gpu_ids -1 \
+--seed_determinism 2147483647 --gpu_ids 0 --save_weights_only False\
 --exp_name ${exp_name} --exp_number ${exp_number} \
 --num_class ${num_class} --datadir ${datadir} --dataset_mode ${dataset_mode} --patch_size ${patch_size} --patch_overlap ${patch_overlap} --dataset_split ${split} \
 --model ${model} --loss ${loss} --metric ${metric} \
