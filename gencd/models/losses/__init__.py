@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 from monai.losses import DiceLoss, DiceCELoss, FocalLoss, TverskyLoss #, DiceFocalLoss
 from .dice import DiceFocalLoss
+from .boundary import BoundaryBCEWithLogitsLoss, BoundaryLoss
 
 def define_loss(loss_name):
     eps = 1e-5
@@ -11,6 +12,8 @@ def define_loss(loss_name):
         loss = nn.CrossEntropyLoss()
     elif loss_name.lower() == 'bce':
         loss = nn.BCEWithLogitsLoss()
+    elif loss_name.lower() == 'bdbce':
+        loss = BoundaryBCEWithLogitsLoss()        
     elif bool(re.match(r"bce(_[0-9]+)+", loss_name.lower())):
         pos_weight = torch.tensor([float(x) for x in loss_name.lower().split('_')[1:]])[:,None,None]
         loss = nn.BCEWithLogitsLoss(pos_weight=pos_weight) 

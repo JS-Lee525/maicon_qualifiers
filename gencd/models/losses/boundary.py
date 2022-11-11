@@ -3,30 +3,8 @@ from typing import Callable, List, Optional, Sequence, Union, Tuple
 from scipy.ndimage import distance_transform_edt
 
 import torch
+from torch import nn
 from torch.nn.modules.loss import _Loss
-
-def onehot2dist(seg: np.ndarray, resolution: Tuple[float, float, float] = None,
-                 dtype=None) -> np.ndarray:
-    """
-    seg: (ch, x, y)
-    """
-    K: int = len(seg)
-
-    res = np.zeros_like(seg, dtype=dtype)
-    for k in range(K):
-        posmask = seg[k].astype(bool)
-
-        if posmask.any():
-            negmask = ~posmask
-            res[k] = distance_transform_edt(negmask, sampling=resolution) * negmask \
-                - (distance_transform_edt(posmask, sampling=resolution) - 1) * posmask
-        # The idea is to leave blank the negative classes
-        # since this is one-hot encoded, another class will supervise that pixel
-
-    return res
-
-def batch_onehot2dist(x):
-    return np.array(list(map(onehot2dist, x)))
 
 class BoundaryLoss(_Loss):
     def __init__(
@@ -109,12 +87,10 @@ class BoundaryLoss(_Loss):
         if target.shape != input.shape:
             raise AssertionError(f"ground truth has different shape ({target.shape}) from input ({input.shape})")
 
-
-        target_dist = torch.from_numpy(batch_onehot2dist(target.cpu().numpy())).type(torch.float32)
+        # compute
+        target_dist = torch.from_numpy(batch_onehot2dist(target.cpu().numpy())).type(torch.float32).to(input.device)
         f = torch.einsum("bkwh,bkwh->bkwh", input, target_dist)
             
-            
-
         if self.reduction == "mean":
             f = torch.mean(f)  # the batch and channel average
         elif self.reduction == "sum":
@@ -128,3 +104,48 @@ class BoundaryLoss(_Loss):
             raise ValueError(f'Unsupported reduction: {self.reduction}, available options are ["mean", "sum", "none"].')
 
         return f
+
+
+class BoundaryBCEWithLogitsLoss(_Loss):
+    def __init__(
+        self,
+        lambda_bd: float = 1.0,
+        lambda_bce: float = 1.0,
+        bce_pos_weight: Optional[torch.Tensor] = None,
+        reduction: str = "mean",
+    ):
+        super().__init__()
+        self.bce = nn.BCEWithLogitsLoss(pos_weight=bce_pos_weight, reduction=reduction,)
+        self.bd = BoundaryLoss(sigmoid=True, reduction=reduction,)
+        self.lambda_bce = lambda_bce 
+        self.lambda_bd = lambda_bd
+        
+    def forward(self, input: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        bce_loss = self.bce(input, target)
+        bd_loss = self.bd(input, target)
+        total_loss: torch.Tensor = self.lambda_bce * bce_loss + self.lambda_bd * bd_loss
+
+        return total_loss        
+        
+def onehot2dist(seg: np.ndarray, resolution: Tuple[float, float, float] = None,
+                 dtype=None) -> np.ndarray:
+    """
+    seg: (ch, x, y)
+    """
+    K: int = len(seg)
+
+    res = np.zeros_like(seg, dtype=dtype)
+    for k in range(K):
+        posmask = seg[k].astype(bool)
+
+        if posmask.any():
+            negmask = ~posmask
+            res[k] = distance_transform_edt(negmask, sampling=resolution) * negmask \
+                - (distance_transform_edt(posmask, sampling=resolution) - 1) * posmask
+        # The idea is to leave blank the negative classes
+        # since this is one-hot encoded, another class will supervise that pixel
+
+    return res
+
+def batch_onehot2dist(x):
+    return np.array(list(map(onehot2dist, x)))
