@@ -54,7 +54,7 @@ if __name__ == '__main__':
     files = [find_files('', x, suffix='.npy') for x in save_dirs]
     for i in range(len(files[0])):
         for j in range(len(files)):
-            if i == 0:
+            if j == 0:
                 npysum = np.load(files[j][i])
             else:
                 npysum += np.load(files[j][i])
