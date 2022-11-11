@@ -14,7 +14,7 @@ from albumentations.pytorch.transforms import ToTensorV2
 from .maicon_image_dataset import MaiconImageDataset
 from .transforms import ComposeList
 
-class MaiconImagev0Dataset(MaiconImageDataset):    
+class MaiconImagev1Dataset(MaiconImageDataset):    
     ## override this to define self.transform
     def prepare_transforms(self):
         self.transform = None
