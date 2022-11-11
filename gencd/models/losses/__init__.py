@@ -11,10 +11,15 @@ def define_loss(loss_name):
     if loss_name.lower() == 'ce':
         loss = nn.CrossEntropyLoss()
     elif loss_name.lower() == 'bce':
-        loss = nn.BCEWithLogitsLoss()
-    elif loss_name.lower() == 'bdbce':
-        loss = BoundaryBCEWithLogitsLoss()        
-    elif bool(re.match(r"bce(_[0-9]+)+", loss_name.lower())):
+        loss = nn.BCEWithLogitsLoss()  
+    elif bool(re.match(r"^bdbce((_[0-9]+(\.[0-9]+)?){2})?$", loss_name.lower())):
+        splits = loss_name.lower().split('_')
+        if len(splits) > 1:
+            w_bd, w_bce = [float(x) for x in splits[1:]]
+        else:
+            w_bd, w_bce = 1, 1
+        loss = BoundaryBCEWithLogitsLoss(lambda_bd=w_bd, lambda_bce=w_bce)           
+    elif bool(re.match(r"^bce(_[0-9]+(\.[0-9]+)?)*$", loss_name.lower())):
         pos_weight = torch.tensor([float(x) for x in loss_name.lower().split('_')[1:]])[:,None,None]
         loss = nn.BCEWithLogitsLoss(pos_weight=pos_weight) 
     elif loss_name.lower() == 'focal':
