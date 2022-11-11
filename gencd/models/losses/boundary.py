@@ -4,7 +4,6 @@ from scipy.ndimage import distance_transform_edt
 
 import torch
 from torch.nn.modules.loss import _Loss
-from monai.utils import LossReduction 
 
 def onehot2dist(seg: np.ndarray, resolution: Tuple[float, float, float] = None,
                  dtype=None) -> np.ndarray:
@@ -37,7 +36,7 @@ class BoundaryLoss(_Loss):
         sigmoid: bool = False,
         softmax: bool = False,
         other_act: Optional[Callable] = None,
-        reduction: Union[LossReduction, str] = LossReduction.MEAN,
+        reduction: str = "mean",
     ) -> None:
         """
         Args:
@@ -59,7 +58,7 @@ class BoundaryLoss(_Loss):
             ValueError: When more than 1 of [``sigmoid=True``, ``softmax=True``, ``other_act is not None``].
                 Incompatible values.
         """
-        super().__init__(reduction=LossReduction(reduction).value)
+        super().__init__(reduction=reduction)
         if other_act is not None and not callable(other_act):
             raise TypeError(f"other_act must be None or callable but is {type(other_act).__name__}.")
         if int(sigmoid) + int(softmax) + int(other_act is not None) > 1:
@@ -116,11 +115,11 @@ class BoundaryLoss(_Loss):
             
             
 
-        if self.reduction == LossReduction.MEAN.value:
+        if self.reduction == "mean":
             f = torch.mean(f)  # the batch and channel average
-        elif self.reduction == LossReduction.SUM.value:
+        elif self.reduction == "sum":
             f = torch.sum(f)  # sum over the batch and channel dims
-        elif self.reduction == LossReduction.NONE.value:
+        elif self.reduction == "none":
             # If we are not computing voxelwise loss components at least
             # make sure a none reduction maintains a broadcastable shape
             broadcast_shape = list(f.shape[0:2]) + [1] * (len(input.shape) - 2)
